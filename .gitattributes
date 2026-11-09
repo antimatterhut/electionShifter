@@ -1,2 +1,4 @@
 * text=auto
 data/raw/** -text
+public/data/** -text
+data/crosswalk/** -text
