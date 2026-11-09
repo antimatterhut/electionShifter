@@ -12,7 +12,6 @@ import {
   METRIC_IDS,
   defaultCandidate,
   metricValue,
-  p95Abs,
   scaleFor,
   turnoutNotice,
   unitDetail,
@@ -93,11 +92,10 @@ describe('unitDetail', () => {
 });
 
 describe('scales per metric', () => {
-  it('rawEdges picks eight 1-2-5 edges from the largest value', () => {
-    expect(rawEdges(112726)).toEqual([500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]);
-    expect(rawEdges(0)).toEqual([1, 2, 5, 10, 20, 50, 100, 200]);
-    expect(rawEdges(7)).toEqual([1, 2, 5, 10, 20, 50, 100, 200]);
-    expect(rawEdges(20000)).toEqual([100, 200, 500, 1000, 2000, 5000, 10000, 20000]);
+  it('rawEdges picks eight 1-3-10 edges from the largest value', () => {
+    expect(rawEdges(369761)).toEqual([100, 300, 1000, 3000, 10000, 30000, 100000, 300000]);
+    expect(rawEdges(57332)).toEqual([10, 30, 100, 300, 1000, 3000, 10000, 30000]);
+    expect(rawEdges(0)).toEqual([1, 3, 10, 30, 100, 300, 1000, 3000]);
   });
   it('gives counties under 5,000 votes a tint on raw scales', () => {
     const s = scaleFor('raw_shift', [-3000, 112726]);
@@ -105,14 +103,15 @@ describe('scales per metric', () => {
     expect(colorForScale(700, s)).not.toBe(colorForScale(0, s));
     expect(colorForScale(1500, s)).not.toBe(colorForScale(4000, s));
   });
-  it('does not let a few huge counties push small ones into the neutral bin', () => {
-    // 250 counties under 3,000 votes and 4 very large ones: top edge follows the 95th percentile, not the max.
-    const vals = [...Array.from({ length: 250 }, (_, i) => (i % 2 ? 1 : -1) * (100 + i * 10)), 450000, -400000, 300000, 250000];
-    expect(p95Abs(vals)).toBeLessThan(3000);
-    const s = scaleFor('raw_margin', vals);
-    expect(s.edges[0]).toBeLessThanOrEqual(200);
+  it('covers both tiny and Harris-sized counties on one raw scale', () => {
+    const vals = [...Array.from({ length: 250 }, (_, i) => (i % 2 ? 1 : -1) * (100 + i * 10)), 369761, 250000, -300000];
+    const s = scaleFor('raw_shift', vals);
+    expect(s.edges[0]).toBeLessThanOrEqual(100);
+    expect(s.edges[s.edges.length - 1]).toBe(300000);
     expect(colorForScale(400, s)).not.toBe(colorForScale(0, s));
-    expect(colorForScale(450000, s)).toBe(colorForScale(1e9, s));
+    // 250k and 369k are in different bins from each other and from a mid-size county.
+    expect(colorForScale(250000, s)).not.toBe(colorForScale(369761, s));
+    expect(colorForScale(30000, s)).not.toBe(colorForScale(250000, s));
   });
   it('uses the fixed percent edges and non-partisan colors for candidate/turnout', () => {
     const c = scaleFor('candidate_change_pct', []);
