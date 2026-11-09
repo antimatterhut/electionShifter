@@ -12,6 +12,7 @@ import {
   METRIC_IDS,
   defaultCandidate,
   metricValue,
+  p95Abs,
   scaleFor,
   turnoutNotice,
   unitDetail,
@@ -103,6 +104,15 @@ describe('scales per metric', () => {
     expect(colorForScale(1500, s)).not.toBe(colorForScale(0, s));
     expect(colorForScale(700, s)).not.toBe(colorForScale(0, s));
     expect(colorForScale(1500, s)).not.toBe(colorForScale(4000, s));
+  });
+  it('does not let a few huge counties push small ones into the neutral bin', () => {
+    // 250 counties under 3,000 votes and 4 very large ones: top edge follows the 95th percentile, not the max.
+    const vals = [...Array.from({ length: 250 }, (_, i) => (i % 2 ? 1 : -1) * (100 + i * 10)), 450000, -400000, 300000, 250000];
+    expect(p95Abs(vals)).toBeLessThan(3000);
+    const s = scaleFor('raw_margin', vals);
+    expect(s.edges[0]).toBeLessThanOrEqual(200);
+    expect(colorForScale(400, s)).not.toBe(colorForScale(0, s));
+    expect(colorForScale(450000, s)).toBe(colorForScale(1e9, s));
   });
   it('uses the fixed percent edges and non-partisan colors for candidate/turnout', () => {
     const c = scaleFor('candidate_change_pct', []);

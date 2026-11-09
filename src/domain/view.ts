@@ -108,9 +108,20 @@ export function metricValue(
   }
 }
 
-/** Color scale for a metric. Raw scales are chosen from the values in view. */
+/** 95th-percentile absolute value (nearest rank). Big counties would otherwise set the whole scale. */
+export function p95Abs(values: readonly number[]): number {
+  if (values.length === 0) return 0;
+  const a = values.map(Math.abs).sort((x, y) => x - y);
+  return a[Math.min(a.length - 1, Math.ceil(0.95 * a.length) - 1)]!;
+}
+
+/**
+ * Color scale for a metric. Raw scales are chosen from the values in view: the top edge comes from
+ * the 95th-percentile absolute value, so a few very large counties land in the open-ended top bin
+ * instead of pushing every small county into the neutral bin.
+ */
 export function scaleFor(metric: MetricId, values: readonly number[]): ScaleSpec {
-  const maxAbs = values.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+  const maxAbs = p95Abs(values);
   switch (metric) {
     case 'margin':
     case 'margin_swing':
