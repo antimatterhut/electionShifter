@@ -24,10 +24,10 @@ Push to `main`. GitHub Actions runs the tests and publishes `dist/` to GitHub Pa
 
 ## Data refresh
 Geometry (Phase 3):
--  downloads the Census county file into a new dated snapshot under
-   with SOURCE.json hashes. It refuses to overwrite an existing snapshot.
--  regenerates ,  and
-   from the latest verified snapshot. Output is deterministic.
+- `npm run data:fetch:census` downloads the Census county file into a new dated snapshot under
+  `data/raw/census-cb/` with SOURCE.json hashes. It refuses to overwrite an existing snapshot.
+- `npm run data:build` regenerates `data/crosswalk/units.csv`, `public/data/v1/units.json` and
+  `public/data/v1/geo/states/TX.topo.json` from the latest verified snapshot. Output is deterministic.
 
 Full refresh and certification workflow: Phase 19.
 
