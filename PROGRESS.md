@@ -36,7 +36,7 @@ Start Phase 5 (First live map) in a new session using KICKOFF_PROMPTS.md.
 - Mocked or stubbed: none. `data/reference/statewide_totals.csv` is generated from the MEDSL snapshot by `npm run data:reference`.
 - Design notes: `race_map.csv` has extra columns `source_file` and `source_label`/`method_note` pass-through (not a §3 schema change). Aliases: one row added, `pushbuild-2026,TX,Lasalle,48283`. Ambiguous unit names (e.g. Baltimore) only fail when a source uses them without an alias. Write-in-party candidates in the feed (party W, e.g. the quoted-name candidate) go to `other_votes`. `candidate_match` in the reference file is a surname matched case-insensitively against candidate names; it is data, not code.
 - Uncertain: (1) 2024 `as_of` is 2026-11-09, the TLC retrieval date, because I did not find an official canvass date; the Texas SoS archive blocks automated fetch, so no number from the SoS itself was used. "Certified" rests on TLC (state agency) plus the MEDSL cross-check. (2) TLC total 11,404,528 vs MEDSL total 11,388,674 (0.14%) differs mostly in write-ins/other (TLC other_votes 24,730); candidate counts agree within 0.004%. Totals are not a tolerance item in §6 so this is recorded, not enforced. (3) TLC VTD keys include non-numeric forms (e.g. `0050010A`, `10903-3`); only the first 3 digits are used, and every key resolved to one of 254 counties.
-- Deploy result: see the entry added after the push.
+- Deploy result: Actions run for f7701b7 concluded success (Linux CI ran verify and the full suite); live URL returns 200 and serves data/v1/manifest.json and the 2026 race file.
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).
