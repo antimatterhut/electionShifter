@@ -1,11 +1,11 @@
 # Progress
 
-Last updated: <date> by <session/phase>
+Last updated: 2026-11-09 by Phase 1 session
 
 ## Phase checklist
 Legend: [ ] todo, [~] in progress, [x] done
 
-- [ ] 1. Repository and deploy
+- [x] 1. Repository and deploy
 - [ ] 2. Metrics library
 - [ ] 3. Texas geometry and unit registry
 - [ ] 4. Texas data pipeline
@@ -27,20 +27,21 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [ ] 20. v1 audit
 
 ## Next steps
-Start Phase 1.
+Start Phase 2 (Metrics library) in a new session using KICKOFF_PROMPTS.md.
 
 ## Last session summary
-- Done:
-- Not done:
-- Mocked or stubbed:
-- Uncertain:
-- Last commit:
-- Deploy result:
+- Done: Phase 1. Planning files split from plan.md; branch renamed to main; remote added; Vite/TS/Vitest scaffold; placeholder page; deploy workflow; Pages live.
+- Not done: nothing in Phase 1.
+- Mocked or stubbed: placeholder page only ("Coming soon").
+- Uncertain: .nvmrc "26" resolved fine in setup-node (run succeeded).
+- Last commit: dc3e92a (code); PROGRESS.md update follows.
+- Deploy result: Actions run for dc3e92a concluded success; live URL returns 200, JS asset at /electionShifter/assets/ contains "Coming soon".
 
 ## Waiting on the owner
-- Confirm Pages source is set to GitHub Actions (Phase 1).
 - Download MEDSL county presidential file (Phase 12).
 
 ## Known issues
+- First deploy (6545b76) failed: github-pages environment only allowed a different branch. Fixed by owner in Settings → Environments.
+- Actions warnings: Node 20 action deprecation (checkout/setup-node/upload-pages-artifact run on Node 24 anyway); ubuntu-latest migrates to Ubuntu 26 from 2026-10-19. Not blocking.
 
 ## Blocked / needs architect
