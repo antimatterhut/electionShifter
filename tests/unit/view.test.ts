@@ -92,11 +92,17 @@ describe('unitDetail', () => {
 });
 
 describe('scales per metric', () => {
-  it('rawEdges picks six 1-2-5 edges from the largest value', () => {
-    expect(rawEdges(112726)).toEqual([2000, 5000, 10000, 20000, 50000, 100000]);
-    expect(rawEdges(0)).toEqual([1, 2, 5, 10, 20, 50]);
-    expect(rawEdges(7)).toEqual([1, 2, 5, 10, 20, 50]);
-    expect(rawEdges(20000)).toEqual([500, 1000, 2000, 5000, 10000, 20000]);
+  it('rawEdges picks eight 1-2-5 edges from the largest value', () => {
+    expect(rawEdges(112726)).toEqual([500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]);
+    expect(rawEdges(0)).toEqual([1, 2, 5, 10, 20, 50, 100, 200]);
+    expect(rawEdges(7)).toEqual([1, 2, 5, 10, 20, 50, 100, 200]);
+    expect(rawEdges(20000)).toEqual([100, 200, 500, 1000, 2000, 5000, 10000, 20000]);
+  });
+  it('gives counties under 5,000 votes a tint on raw scales', () => {
+    const s = scaleFor('raw_shift', [-3000, 112726]);
+    expect(colorForScale(1500, s)).not.toBe(colorForScale(0, s));
+    expect(colorForScale(700, s)).not.toBe(colorForScale(0, s));
+    expect(colorForScale(1500, s)).not.toBe(colorForScale(4000, s));
   });
   it('uses the fixed percent edges and non-partisan colors for candidate/turnout', () => {
     const c = scaleFor('candidate_change_pct', []);

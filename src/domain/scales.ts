@@ -23,6 +23,10 @@ export interface Ramps {
 export const PARTISAN_8: Ramps = { pos: BLUE_RAMP, neg: RED_RAMP };
 export const PARTISAN_6: Ramps = { pos: BLUE_RAMP6, neg: RED_RAMP6 };
 export const CHANGE_6: Ramps = { pos: GREEN_RAMP6, neg: PURPLE_RAMP6 };
+/** Eight-step non-partisan ramps for raw-vote change scales. */
+export const GREEN_RAMP8 = ['#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'] as const;
+export const PURPLE_RAMP8 = ['#f2e6f5', '#e0cfe8', '#c2a5cf', '#a77fba', '#8856a0', '#762a83', '#5a1a68', '#40004b'] as const;
+export const CHANGE_8: Ramps = { pos: GREEN_RAMP8, neg: PURPLE_RAMP8 };
 
 export type Palette = 'partisan' | 'change';
 export type Unit = 'pts' | 'pct' | 'votes';
@@ -33,15 +37,15 @@ export const CANDIDATE_PCT_EDGES = [2, 5, 10, 20, 35, 50] as const;
 export const TURNOUT_PCT_EDGES = [2, 5, 10, 20, 30, 40] as const;
 
 /**
- * Six 1-2-5 edges for a raw-vote scale. The top edge is the largest 1-2-5 value
- * not above maxAbs (at least 50), so the scale is chosen by the largest absolute value in view.
+ * Eight 1-2-5 edges for a raw-vote scale, so small counties still get a tint. The top edge is
+ * the largest 1-2-5 value not above maxAbs (at least 200), so the scale follows the largest value in view.
  */
 export function rawEdges(maxAbs: number): number[] {
   const seq: number[] = [];
   for (let p = 1; p <= 1e9; p *= 10) seq.push(p, 2 * p, 5 * p);
-  let top = 5;
+  let top = 7;
   while (top + 1 < seq.length && seq[top + 1]! <= maxAbs) top++;
-  return seq.slice(top - 5, top + 1);
+  return seq.slice(top - 7, top + 1);
 }
 
 export interface ScaleSpec {
@@ -51,7 +55,7 @@ export interface ScaleSpec {
 }
 
 export function rampsFor(spec: ScaleSpec): Ramps {
-  if (spec.palette === 'change') return CHANGE_6;
+  if (spec.palette === 'change') return spec.edges.length === 8 ? CHANGE_8 : CHANGE_6;
   return spec.edges.length === 8 ? PARTISAN_8 : PARTISAN_6;
 }
 
