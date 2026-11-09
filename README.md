@@ -24,3 +24,6 @@ Push to `main`. GitHub Actions runs the tests and publishes `dist/` to GitHub Pa
 
 ## Data refresh
 Not yet implemented (Phase 19).
+
+## Status
+Phase 1 complete: placeholder page deployed via GitHub Actions.
