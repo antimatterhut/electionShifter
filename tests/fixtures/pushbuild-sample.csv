@@ -1,0 +1,11 @@
+state,level,county,contest,candidate,party,votes,pct,contestTotalVotes,precinctsReporting,precinctsTotal,source,sourceUrl,sourceUpdatedAt,fetchedAt
+TX,state,,U. S. SENATOR,ALPHA ONE,DEM,300,0,520,,,s,u,,f
+TX,state,,U. S. SENATOR,BETA TWO,REP,200,0,520,,,s,u,,f
+TX,state,,U. S. SENATOR,"BRADFORD ""BRAD"" HALL",W,20,0,520,,,s,u,,f
+TX,county,Alpha,U. S. SENATOR,ALPHA ONE,DEM,100,0,170,,,s,u,,f
+TX,county,Alpha,U. S. SENATOR,BETA TWO,REP,60,0,170,,,s,u,,f
+TX,county,Alpha,U. S. SENATOR,"BRADFORD ""BRAD"" HALL",W,10,0,170,,,s,u,,f
+TX,county,Dewitt,U. S. SENATOR,ALPHA ONE,DEM,200,0,360,,,s,u,,f
+TX,county,Dewitt,U. S. SENATOR,BETA TWO,REP,140,0,360,,,s,u,,f
+TX,county,Dewitt,U. S. SENATOR,"BRADFORD ""BRAD"" HALL",W,10,0,360,,,s,u,,f
+TX,county,Alpha,ATTORNEY GENERAL,SOMEONE ELSE,DEM,5,0,5,,,s,u,,f

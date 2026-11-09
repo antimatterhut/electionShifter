@@ -2,3 +2,5 @@
 data/raw/** -text
 public/data/** -text
 data/crosswalk/** -text
+data/reference/** -text
+data/overrides/** -text

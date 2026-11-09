@@ -1,0 +1,25 @@
+{
+  "source_id": "tlc-2024",
+  "snapshot": "2026-11-09",
+  "retrieved_at": "2026-11-09T11:18:17.911Z",
+  "method": "scripted",
+  "urls": [
+    "https://ted.capitol.texas.gov/api/Offices/510/1/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/2/vtd"
+  ],
+  "upstream_commit": null,
+  "license": "CC BY (Texas Legislative Council)",
+  "files": [
+    {
+      "path": "tlc-1.csv",
+      "sha256": "cd48dac7c363f1cd66fcd30ffc81ce06923dd313bf908f6626bc485481257b88",
+      "bytes": 295118
+    },
+    {
+      "path": "tlc-2.csv",
+      "sha256": "03464ba753587d2e4008b144a2f388bcf69882fb6147eac908c90ed56fc01937",
+      "bytes": 295700
+    }
+  ],
+  "notes": "Texas 2024 general election results by VTD. Office 1 = President, 2 = U.S. Senate."
+}

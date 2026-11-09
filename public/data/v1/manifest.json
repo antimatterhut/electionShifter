@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "geo_version": "2025c",
+  "build_hash": "58652f9989434520917ead9a95448e0e22ab1a2975573a2a24ce72207e456230",
+  "races": [
+    {
+      "race_id": "2024-TX-president-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "president",
+      "office_label": "President",
+      "seat": null,
+      "stage": "gen",
+      "status": "certified",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-president-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "na",
+        "tier2": "pass",
+        "max_diff_pct": 0.0036
+      }
+    },
+    {
+      "race_id": "2026-TX-us-senate-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "us-senate",
+      "office_label": "U.S. Senate",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-us-senate-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "president",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "us-senate",
+      "state": "ok",
+      "note": ""
+    }
+  ]
+}

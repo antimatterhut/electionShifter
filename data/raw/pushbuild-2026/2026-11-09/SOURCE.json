@@ -1,0 +1,19 @@
+{
+  "source_id": "pushbuild-2026",
+  "snapshot": "2026-11-09",
+  "retrieved_at": "2026-11-09T11:18:16.913Z",
+  "method": "scripted",
+  "urls": [
+    "https://raw.githubusercontent.com/pushbuild/us-2026-election-results/56b4b499507f5b8fce9433640de34a56df4ad619/data/tx.csv"
+  ],
+  "upstream_commit": "56b4b499507f5b8fce9433640de34a56df4ad619",
+  "license": "CC0 (per upstream repository)",
+  "files": [
+    {
+      "path": "tx.csv",
+      "sha256": "4b5b1071ea251aeaa6ad1433021a9f797c27e9cc5bd5a30a5ecf43418ccb1101",
+      "bytes": 3642509
+    }
+  ],
+  "notes": "Unofficial 2026 general results, Texas only, pinned to an upstream commit."
+}

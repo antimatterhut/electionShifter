@@ -1,0 +1,19 @@
+{
+  "source_id": "medsl-2024",
+  "snapshot": "2026-11-09",
+  "retrieved_at": "2026-11-09T11:18:18.484Z",
+  "method": "scripted",
+  "urls": [
+    "https://raw.githubusercontent.com/MEDSL/2024-elections-official/df531089c78e6d0098db1a6bfb3849a066a06995/2024-president-state.csv"
+  ],
+  "upstream_commit": "df531089c78e6d0098db1a6bfb3849a066a06995",
+  "license": "Repository has no license file; used only as an independent cross-check (Tier 2), not republished",
+  "files": [
+    {
+      "path": "2024-president-state.csv",
+      "sha256": "d3170796305a9ee576d6362fbfdd9c4ffdf888566361b4b95f4d5e9d019a6348",
+      "bytes": 75635
+    }
+  ],
+  "notes": "MEDSL 2024 President state totals. Independent reference for Tier 2 validation."
+}

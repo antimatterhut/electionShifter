@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "tsc --noEmit && vitest run && vite build",
+    "test": "tsc --noEmit && node pipeline/cli.ts verify && vitest run && vite build",
     "data:fetch:census": "node pipeline/cli.ts fetch-census",
-    "data:build": "node pipeline/cli.ts build"
+    "data:fetch:pushbuild": "node pipeline/cli.ts fetch-pushbuild",
+    "data:fetch:tlc": "node pipeline/cli.ts fetch-tlc",
+    "data:fetch:medsl": "node pipeline/cli.ts fetch-medsl",
+    "data:reference": "node pipeline/cli.ts fill-reference",
+    "data:build": "node pipeline/cli.ts build",
+    "data:verify": "node pipeline/cli.ts verify"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

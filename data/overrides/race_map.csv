@@ -1,0 +1,3 @@
+source_id,source_file,source_contest,race_id,year,election_date,state_po,office,office_label,seat,stage,status,as_of,source_label,method_note
+pushbuild-2026,tx.csv,U. S. SENATOR,2026-TX-us-senate-gen,2026,2026-11-03,TX,us-senate,U.S. Senate,,gen,unofficial,2026-11-06,Texas Secretary of State election night feed via pushbuild/us-2026-election-results,
+tlc-2024,tlc-1.csv,President,2024-TX-president-gen,2024,2024-11-05,TX,president,President,,gen,certified,2026-11-09,Texas Legislative Council Capitol Data Portal (VTD results summed to counties),
