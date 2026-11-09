@@ -94,7 +94,10 @@ describe('unitDetail', () => {
 describe('scales per metric', () => {
   it('rawEdges picks eight 1-3-10 edges from the largest value', () => {
     expect(rawEdges(369761)).toEqual([100, 300, 1000, 3000, 10000, 30000, 100000, 300000]);
-    expect(rawEdges(57332)).toEqual([10, 30, 100, 300, 1000, 3000, 10000, 30000]);
+    expect(rawEdges(29999)).toEqual([10, 30, 100, 300, 1000, 3000, 10000, 20000]);
+    // Once the data reaches the next round value (2 or 5), an extra edge splits the open top bin.
+    expect(rawEdges(57332)).toEqual([30, 100, 300, 1000, 3000, 10000, 30000, 50000]);
+    expect(rawEdges(98846)).toEqual([30, 100, 300, 1000, 3000, 10000, 30000, 50000]);
     expect(rawEdges(0)).toEqual([1, 3, 10, 30, 100, 300, 1000, 3000]);
   });
   it('gives counties under 5,000 votes a tint on raw scales', () => {

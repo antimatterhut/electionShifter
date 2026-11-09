@@ -39,14 +39,20 @@ export const TURNOUT_PCT_EDGES = [2, 5, 10, 20, 30, 40] as const;
 /**
  * Eight edges for a raw-vote scale from a 1-3-10-30-100... sequence (about 3.5 decades), so tiny
  * counties still get a tint and the biggest ones are not lumped together. The top edge is the largest
- * sequence value not above maxAbs (at least 30), so the scale follows the largest value in view.
+ * sequence value not above maxAbs (at least 3,000), so the scale follows the largest value in view.
  */
 export function rawEdges(maxAbs: number): number[] {
   const seq: number[] = [];
   for (let p = 1; p <= 1e9; p *= 10) seq.push(p, 3 * p);
   let top = 7;
   while (top + 1 < seq.length && seq[top + 1]! <= maxAbs) top++;
-  return seq.slice(top - 7, top + 1);
+  const edges = seq.slice(top - 7, top + 1);
+  // The largest 1-3-10 edge can leave a wide open top bin (30,000 to 98,000 in one color). When the data
+  // reaches the next round value (2 after a 1, 5 after a 3), add it as an edge and drop the smallest one,
+  // so the biggest places separate.
+  const extra = top % 2 === 0 ? seq[top]! * 2 : (seq[top]! / 3) * 5;
+  if (maxAbs >= extra) return [...edges.slice(1), extra];
+  return edges;
 }
 
 export interface ScaleSpec {
