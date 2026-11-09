@@ -13,7 +13,7 @@ import {
   CANDIDATE_PCT_EDGES,
   MARGIN_EDGES,
   TURNOUT_PCT_EDGES,
-  rawEdges,
+  rawScale,
   type ScaleSpec,
 } from './scales.ts';
 import type { Basis, MetricId, MetricResult, RaceFile, RaceMeta, Totals } from './types.ts';
@@ -119,12 +119,12 @@ export function scaleFor(metric: MetricId, values: readonly number[]): ScaleSpec
     case 'raw_shift':
     case 'shift_from_margin':
     case 'shift_from_turnout':
-      return { edges: rawEdges(maxAbs), palette: 'partisan', unit: 'votes' };
+      return rawScale(maxAbs, 'partisan');
     case 'candidate_change_pct':
       return { edges: CANDIDATE_PCT_EDGES, palette: 'change', unit: 'pct' };
     case 'candidate_change_raw':
     case 'turnout_change_raw':
-      return { edges: rawEdges(maxAbs), palette: 'change', unit: 'votes' };
+      return rawScale(maxAbs, 'change');
     case 'turnout_change_pct':
       return { edges: TURNOUT_PCT_EDGES, palette: 'change', unit: 'pct' };
   }

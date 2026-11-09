@@ -36,7 +36,8 @@ Start Phase 9 (Shareable URLs) in a new session using KICKOFF_PROMPTS.md.
 - Mocked or stubbed: the real default pair gives Collin + Denton different numbers than the §4 worked example, so the e2e test mocks the two race files' Collin and Denton rows with the §4 inputs to check +22.43, +205,151 and −11.69% in the UI. The partial-missing e2e mocks Denton as null in race B.
 - Judgment calls: (1) A county missing in either race is excluded from both sides of the group so the comparison is like-for-like. (2) Selection uses click on the map; the existing click-to-pin tooltip still also fires. (3) Group state is not reset when the race pair changes.
 - Uncertain: not yet checked at narrow mobile widths; the panel sits below the legend.
-- Deploy result: Actions run for dcd078c concluded success (full npm test incl. Playwright ran in CI); live URL returns 200.
+- Follow-up (owner request, after Phase 8): raw-vote metrics (raw shift, shift from margin/turnout, raw margin, candidate change votes, turnout change votes) now use a continuous symmetric-log color ramp (`rawScale`, `continuousColor`, `gradientLegend` in `src/domain/scales.ts`; gradient legend in `src/ui/legend.ts`) instead of 8 fixed bins, because fixed bins lumped the largest counties (7 counties from +30k to +98k shared one color). `rawEdges` is removed; its tests were replaced by tests of the new behavior (continuous scale, distinct shades for the 7 largest counties and small ones, symmetry, neutral zero, darkest at max, legend gradient). Percent and point metrics keep the fixed §5 bins. This deviates from §5's "7-step ramp per side" wording for raw scales; architect to confirm. Scale is symmetric, so when changes are mostly one-signed half the legend is unused.
+- Deploy result (Phase 8): Actions run for dcd078c concluded success (full npm test incl. Playwright ran in CI); live URL returns 200.
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).

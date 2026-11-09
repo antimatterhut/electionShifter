@@ -5,7 +5,10 @@ import {
   TURNOUT_PCT_EDGES,
   binsForScale,
   colorForScale,
-  rawEdges,
+  continuousColor,
+  gradientLegend,
+  rampsFor,
+  symlogT,
 } from '../../src/domain/scales.ts';
 import type { RaceMeta } from '../../src/domain/types.ts';
 import {
@@ -92,13 +95,11 @@ describe('unitDetail', () => {
 });
 
 describe('scales per metric', () => {
-  it('rawEdges picks eight 1-3-10 edges from the largest value', () => {
-    expect(rawEdges(369761)).toEqual([100, 300, 1000, 3000, 10000, 30000, 100000, 300000]);
-    expect(rawEdges(29999)).toEqual([10, 30, 100, 300, 1000, 3000, 10000, 20000]);
-    // Once the data reaches the next round value (2 or 5), an extra edge splits the open top bin.
-    expect(rawEdges(57332)).toEqual([30, 100, 300, 1000, 3000, 10000, 30000, 50000]);
-    expect(rawEdges(98846)).toEqual([30, 100, 300, 1000, 3000, 10000, 30000, 50000]);
-    expect(rawEdges(0)).toEqual([1, 3, 10, 30, 100, 300, 1000, 3000]);
+  it('raw-vote scales are continuous, end at the largest value, and tick at powers of ten', () => {
+    const s = scaleFor('raw_shift', [-3000, 98846]);
+    expect(s.continuous).toEqual({ max: 98846 });
+    expect(s.edges).toEqual([100, 1000, 10000]);
+    expect(scaleFor('raw_shift', []).edges).toEqual([100]);
   });
   it('gives counties under 5,000 votes a tint on raw scales', () => {
     const s = scaleFor('raw_shift', [-3000, 112726]);
@@ -106,15 +107,38 @@ describe('scales per metric', () => {
     expect(colorForScale(700, s)).not.toBe(colorForScale(0, s));
     expect(colorForScale(1500, s)).not.toBe(colorForScale(4000, s));
   });
-  it('covers both tiny and Harris-sized counties on one raw scale', () => {
-    const vals = [...Array.from({ length: 250 }, (_, i) => (i % 2 ? 1 : -1) * (100 + i * 10)), 369761, 250000, -300000];
-    const s = scaleFor('raw_shift', vals);
-    expect(s.edges[0]).toBeLessThanOrEqual(100);
-    expect(s.edges[s.edges.length - 1]).toBe(300000);
-    expect(colorForScale(400, s)).not.toBe(colorForScale(0, s));
-    // 250k and 369k are in different bins from each other and from a mid-size county.
-    expect(colorForScale(250000, s)).not.toBe(colorForScale(369761, s));
-    expect(colorForScale(30000, s)).not.toBe(colorForScale(250000, s));
+  it('every big county gets its own shade (the 98k, 52k, 43k, 42k, 32k, 31k, 30k case)', () => {
+    const big = [98846, 52192, 43378, 42246, 31739, 31450, 30288];
+    const s = scaleFor('candidate_change_raw', [...big, 166, -378]);
+    expect(new Set(big.map((v) => colorForScale(v, s))).size).toBe(big.length);
+    const small = [30, 100, 166, 300, 1000, 5406];
+    expect(new Set(small.map((v) => colorForScale(v, s))).size).toBe(small.length);
+  });
+  it('is symmetric, neutral at zero, darker with size, and the max gets the darkest color', () => {
+    const s = scaleFor('raw_shift', [-300000, 369761]);
+    expect(colorForScale(0, s)).toBe('#e8e8e8');
+    const ramps = rampsFor(s);
+    expect(colorForScale(369761, s)).toBe(ramps.pos[7]);
+    expect(colorForScale(-369761, s)).toBe(ramps.neg[7]);
+    let prev = symlogT(0, 369761);
+    for (const v of [10, 100, 1000, 10000, 100000, 369761]) {
+      const t = symlogT(v, 369761);
+      expect(t).toBeGreaterThan(prev);
+      prev = t;
+    }
+    expect(symlogT(500000, 369761)).toBe(1); // clamped
+    expect(continuousColor(-50, 1000, ramps)).not.toBe(continuousColor(50, 1000, ramps));
+  });
+  it('gradient legend runs from negative to positive with ticks at symmetric positions', () => {
+    const g = gradientLegend(scaleFor('raw_shift', [-3000, 98846]));
+    expect(g.stops[0]!.pos).toBe(0);
+    expect(g.stops.at(-1)!.pos).toBe(1);
+    expect(g.stops[20]!.color).toBe('#e8e8e8');
+    const zero = g.ticks.find((t) => t.value === 0)!;
+    expect(zero.pos).toBe(0.5);
+    const p = g.ticks.find((t) => t.value === 1000)!;
+    const n = g.ticks.find((t) => t.value === -1000)!;
+    expect(p.pos + n.pos).toBeCloseTo(1, 10);
   });
   it('uses the fixed percent edges and non-partisan colors for candidate/turnout', () => {
     const c = scaleFor('candidate_change_pct', []);
@@ -129,6 +153,7 @@ describe('scales per metric', () => {
     for (const m of METRIC_IDS) {
       const s = scaleFor(m, [-3000, 80000]);
       expect(colorForScale(0, s)).toBe(colorForScale(0.0001, s));
+      if (s.continuous) continue; // continuous scales are covered above
       const bins = binsForScale(s, String);
       expect(bins).toHaveLength(2 * s.edges.length + 1);
       expect(new Set(bins.map((b) => b.color)).size).toBe(bins.length);

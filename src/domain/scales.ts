@@ -36,34 +36,80 @@ export const CANDIDATE_PCT_EDGES = [2, 5, 10, 20, 35, 50] as const;
 /** Percent-change edges (turnout change). */
 export const TURNOUT_PCT_EDGES = [2, 5, 10, 20, 30, 40] as const;
 
-/**
- * Eight edges for a raw-vote scale from a 1-3-10-30-100... sequence (about 3.5 decades), so tiny
- * counties still get a tint and the biggest ones are not lumped together. The top edge is the largest
- * sequence value not above maxAbs (at least 3,000), so the scale follows the largest value in view.
- */
-export function rawEdges(maxAbs: number): number[] {
-  const seq: number[] = [];
-  for (let p = 1; p <= 1e9; p *= 10) seq.push(p, 3 * p);
-  let top = 7;
-  while (top + 1 < seq.length && seq[top + 1]! <= maxAbs) top++;
-  const edges = seq.slice(top - 7, top + 1);
-  // The largest 1-3-10 edge can leave a wide open top bin (30,000 to 98,000 in one color). When the data
-  // reaches the next round value (2 after a 1, 5 after a 3), add it as an edge and drop the smallest one,
-  // so the biggest places separate.
-  const extra = top % 2 === 0 ? seq[top]! * 2 : (seq[top]! / 3) * 5;
-  if (maxAbs >= extra) return [...edges.slice(1), extra];
-  return edges;
+/** Symmetric-log constant: changes below about this many votes sit close to neutral. */
+export const SYMLOG_C = 10;
+
+/** Position 0..1 of |value| along a symmetric-log axis that ends at `max`. */
+export function symlogT(abs: number, max: number): number {
+  if (!(max > 0)) return 0;
+  return Math.min(1, Math.max(0, Math.log1p(abs / SYMLOG_C) / Math.log1p(max / SYMLOG_C)));
 }
 
 export interface ScaleSpec {
   edges: readonly number[];
   palette: Palette;
   unit: Unit;
+  /** Present on raw-vote scales: colors blend smoothly along a symmetric-log axis ending at `max`. */
+  continuous?: { max: number };
+}
+
+/**
+ * Raw-vote scales are continuous, because county sizes span several orders of magnitude and fixed bins
+ * either lump the largest counties or leave the smallest gray. `edges` are the legend tick values
+ * (powers of ten from 100 up to the maximum).
+ */
+export function rawScale(maxAbs: number, palette: Palette): ScaleSpec {
+  const max = Math.max(maxAbs, 100);
+  const edges: number[] = [];
+  for (let p = 100; p <= max; p *= 10) edges.push(p);
+  return { edges, palette, unit: 'votes', continuous: { max } };
 }
 
 export function rampsFor(spec: ScaleSpec): Ramps {
-  if (spec.palette === 'change') return spec.edges.length === 8 ? CHANGE_8 : CHANGE_6;
-  return spec.edges.length === 8 ? PARTISAN_8 : PARTISAN_6;
+  const eight = spec.continuous !== undefined || spec.edges.length === 8;
+  if (spec.palette === 'change') return eight ? CHANGE_8 : CHANGE_6;
+  return eight ? PARTISAN_8 : PARTISAN_6;
+}
+
+function hex(c: string): [number, number, number] {
+  return [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16)) as [number, number, number];
+}
+
+/** Blend through neutral, then the ramp from lightest to darkest. t is 0..1. */
+function blend(ramp: readonly string[], t: number): string {
+  const stops = [NEUTRAL_COLOR, ...ramp];
+  const x = t * (stops.length - 1);
+  const i = Math.min(stops.length - 2, Math.floor(x));
+  const f = x - i;
+  const [a, b] = [hex(stops[i]!), hex(stops[i + 1]!)];
+  return '#' + a.map((v, k) => Math.round(v + (b[k]! - v) * f).toString(16).padStart(2, '0')).join('');
+}
+
+/** Color for a signed value on a continuous scale. Zero is exactly neutral. */
+export function continuousColor(value: number, max: number, ramps: Ramps): string {
+  const abs = Math.abs(value);
+  if (abs < 0.5) return NEUTRAL_COLOR;
+  return blend(value < 0 ? ramps.neg : ramps.pos, symlogT(abs, max));
+}
+
+/** Gradient stops (position 0 = strongest negative, 1 = strongest positive) and tick marks for the legend. */
+export function gradientLegend(spec: ScaleSpec): {
+  stops: { pos: number; color: string }[];
+  ticks: { pos: number; value: number }[];
+} {
+  const max = spec.continuous!.max;
+  const ramps = rampsFor(spec);
+  const N = 40;
+  const stops: { pos: number; color: string }[] = [];
+  for (let i = 0; i <= N; i++) {
+    const pos = i / N;
+    const u = (pos - 0.5) * 2; // -1..1 along the symlog axis
+    const abs = SYMLOG_C * Math.expm1(Math.abs(u) * Math.log1p(max / SYMLOG_C));
+    stops.push({ pos, color: continuousColor(u < 0 ? -abs : abs, max, ramps) });
+  }
+  const at = (v: number) => 0.5 + Math.sign(v) * 0.5 * symlogT(Math.abs(v), max);
+  const values = [...[...spec.edges].reverse().map((e) => -e), 0, ...spec.edges];
+  return { stops, ticks: values.map((value) => ({ pos: at(value), value })) };
 }
 
 export interface Bin {
@@ -103,6 +149,7 @@ export function colorFor(
 
 /** Fill color for a value on a scale. */
 export function colorForScale(value: number, spec: ScaleSpec): string {
+  if (spec.continuous) return continuousColor(value, spec.continuous.max, rampsFor(spec));
   return colorFor(value, spec.edges, rampsFor(spec));
 }
 
