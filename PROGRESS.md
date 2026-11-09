@@ -35,7 +35,7 @@ Start Phase 6 (All metrics and explanation) in a new session using KICKOFF_PROMP
 - Not done: nothing in Phase 5. Tooltips are only the SVG title and aria-label (out of scope).
 - Mocked or stubbed: none. Race pair, state and name are fixed constants in app.ts until Phase 7.
 - Uncertain: vite.config.ts now imports from vitest/config and excludes tests/e2e from vitest. Every Texas county swings toward D in this pair (midterm vs presidential); the Phase 6 turnout notice is not built yet.
-- Deploy result: pending confirmation (see below).
+- Deploy result: Actions run for 07835f0 concluded success (CI installed chromium and ran the full npm test including Playwright); live URL returns 200 and serves the built JS/CSS and TX.topo.json. (The earlier push f8ec644 was superseded and cancelled.)
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).
