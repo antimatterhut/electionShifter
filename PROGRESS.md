@@ -36,7 +36,7 @@ Start Phase 7 (All Texas statewide races and race picker) in a new session using
 - Mocked or stubbed: none. Race pair is still fixed in app.ts until Phase 7.
 - Judgment calls: (1) margin and raw margin are single-race metrics, so a Race select (A or B) appears for them; default is the newer race. (2) Candidate metrics default to the D-side candidate in each race (Harris → Talarico matches §4). (3) Raw-vote scales use six 1-2-5 edges from the largest absolute value in view (the §5 table says "1-2-5 values chosen by the largest absolute value"), top edge is the largest 1-2-5 value not above the max. Candidate names are title-cased from source names for display only. (4) Turnout notice rule: one race is president and the other is in a non-presidential year, or statewide total changed more than 10%.
 - Uncertain: 254 map paths are all tab stops (tabindex=0), which makes keyboard traversal long; a skip link or roving tabindex would help but is not in the plan. The tooltip is pointer-events none and positioned from the path box on focus, checked only in Chromium at desktop width, not on a real touch device.
-- Deploy result: see the next line (filled in after the push).
+- Deploy result: Actions run for b00cbf5 concluded success (full npm test including Playwright ran in CI); live URL returns 200 and the served JS bundle contains the Phase 6 UI.
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).
