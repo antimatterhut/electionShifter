@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-09 by Phase 4 session
+Last updated: 2026-11-09 by Phase 5 session
 
 ## Phase checklist
 Legend: [ ] todo, [~] in progress, [x] done
@@ -9,7 +9,7 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [x] 2. Metrics library
 - [x] 3. Texas geometry and unit registry
 - [x] 4. Texas data pipeline
-- [ ] 5. First live map (end-to-end slice)
+- [x] 5. First live map (end-to-end slice)
 - [ ] 6. All metrics and explanation
 - [ ] 7. All Texas statewide races and race picker
 - [ ] 8. County groups
@@ -27,16 +27,21 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [ ] 20. v1 audit
 
 ## Next steps
-Start Phase 5 (First live map) in a new session using KICKOFF_PROMPTS.md.
+Start Phase 6 (All metrics and explanation) in a new session using KICKOFF_PROMPTS.md.
 
 ## Last session summary
-- Done: Phase 4. Snapshots (all dated 2026-11-09, sha256 in SOURCE.json): `pushbuild-2026` (tx.csv, upstream commit 56b4b499507f5b8fce9433640de34a56df4ad619, the 2026-11-06 11:32 PM ET results), `tlc-2024` (office ids 1 and 2), `medsl-2024` (2024-president-state.csv, upstream commit df531089c78e6d0098db1a6bfb3849a066a06995). Adapters, normalize, validate, emit/build and `verify` are in `pipeline/`. `npm test` now runs `node pipeline/cli.ts verify` (rebuild into a temp dir, byte-compare, fail on stale or extra files under public/data/v1). Both races have 254 units, no nulls, units equal the TX topology ids. Golden values all match (Collin/Denton both races; 2024 Harris 4,835,134, Trump 6,393,403, total 11,404,528; 2026 Talarico 5,444,982, Paxton 4,249,373, total 9,889,704). 87 tests pass.
-- Validation: 2026 Senate Tier 1 pass (county sums equal the feed statewide rows exactly), Tier 2 `pending` (plan §6: unofficial Tier 2 is reported only). 2024 President Tier 1 `na` (TLC has no statewide row), Tier 2 pass against MEDSL, max diff 0.0036% (tolerance max(50, 0.05%)). So "Tier 1 and Tier 2 pass" holds per race only where §6 defines them; no race has both.
-- Not done: nothing in Phase 4.
-- Mocked or stubbed: none. `data/reference/statewide_totals.csv` is generated from the MEDSL snapshot by `npm run data:reference`.
-- Design notes: `race_map.csv` has extra columns `source_file` and `source_label`/`method_note` pass-through (not a §3 schema change). Aliases: one row added, `pushbuild-2026,TX,Lasalle,48283`. Ambiguous unit names (e.g. Baltimore) only fail when a source uses them without an alias. Write-in-party candidates in the feed (party W, e.g. the quoted-name candidate) go to `other_votes`. `candidate_match` in the reference file is a surname matched case-insensitively against candidate names; it is data, not code.
-- Uncertain: (1) 2024 `as_of` is 2026-11-09, the TLC retrieval date, because I did not find an official canvass date; the Texas SoS archive blocks automated fetch, so no number from the SoS itself was used. "Certified" rests on TLC (state agency) plus the MEDSL cross-check. (2) TLC total 11,404,528 vs MEDSL total 11,388,674 (0.14%) differs mostly in write-ins/other (TLC other_votes 24,730); candidate counts agree within 0.004%. Totals are not a tolerance item in §6 so this is recorded, not enforced. (3) TLC VTD keys include non-numeric forms (e.g. `0050010A`, `10903-3`); only the first 3 digits are used, and every key resolved to one of 254 counties.
-- Deploy result: Actions run for f7701b7 concluded success (Linux CI ran verify and the full suite); live URL returns 200 and serves data/v1/manifest.json and the 2026 race file.
+- Done: Phase 5.  (fixed ±1/3/6/10/15/25 bins, symmetric, neutral center), , , styles. d3-geo + topojson-client added; @playwright/test dev. Map uses geoConicEqualArea (rotate 100, parallels 27.5/35) fit to the 254 counties. Title, subtitle, amber UNOFFICIAL badge (mixed status rule), legend with Missing hatch, source line for both races. Unknown command: "test"
+
+
+Did you mean this?
+  npm test # Test a package
+To see a list of supported npm commands, run:
+  npm help now ends with  against  at the base path; workflow installs chromium before tests. 93 vitest tests plus 1 e2e pass locally. e2e checks: 254 paths, legend, UNOFFICIAL, Collin fill is the +15 to +25 bin with label +23.18, no console errors, no 4xx/failed requests. Screenshot in test-results only.
+- Bug found by a test: binIndex returned -0 for small negatives; fixed in code.
+- Not done: nothing in Phase 5. Tooltips are only the SVG title/aria-label (out of scope).
+- Mocked or stubbed: none. Race pair, state and name are fixed constants in app.ts until Phase 7.
+- Uncertain: vite.config.ts now imports from vitest/config and excludes tests/e2e from vitest. Whole-state swing is blue everywhere (Texas swung toward D in this pair; midterm vs presidential, see turnout notice planned for Phase 6).
+- Deploy result: see below.
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).

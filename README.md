@@ -18,7 +18,8 @@ npm install
 ## Test
 `npm test` runs the type-check, `node pipeline/cli.ts verify` (rebuilds all generated data from raw into a
 temp dir and byte-compares it with the committed files; Tier 1 and Tier 2 validation run as part of the
-rebuild), unit tests, and the production build.
+rebuild), unit tests, the production build, and the Playwright e2e test (`playwright test`, against
+`vite preview` at `/electionShifter/`). The e2e screenshot is written to `test-results/` (git-ignored).
 
 ## Deploy
 Push to `main`. GitHub Actions runs the tests and publishes `dist/` to GitHub Pages
@@ -47,7 +48,8 @@ overwrite an existing one. Arguments after `--` are `YYYY-MM-DD [upstream sha]`:
 Full refresh and certification workflow: Phase 19.
 
 ## Status
-Phases 1-4 complete: deploy, metrics library, Texas geometry and unit registry, Texas data pipeline
-(`2024-TX-president-gen` certified, `2026-TX-us-senate-gen` unofficial).
+Phases 1-5 complete: deploy, metrics library, Texas geometry and unit registry, Texas data pipeline
+(`2024-TX-president-gen` certified, `2026-TX-us-senate-gen` unofficial), and the first live map
+(Texas 2026 Senate vs 2024 President margin swing, 254 counties).
 
 Live site: https://antimatterhut.github.io/electionShifter/

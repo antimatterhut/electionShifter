@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "tsc --noEmit && node pipeline/cli.ts verify && vitest run && vite build",
+    "test": "tsc --noEmit && node pipeline/cli.ts verify && vitest run && vite build && playwright test",
     "data:fetch:census": "node pipeline/cli.ts fetch-census",
     "data:fetch:pushbuild": "node pipeline/cli.ts fetch-pushbuild",
     "data:fetch:tlc": "node pipeline/cli.ts fetch-tlc",
@@ -16,11 +16,19 @@
     "data:verify": "node pipeline/cli.ts verify"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/d3-geo": "^3.1.1",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^26.6.6",
+    "@types/topojson-client": "^3.1.5",
     "csv-parse": "^7.0.3",
     "mapshaper": "^0.7.101",
     "typescript": "^7.0.2",
     "vite": "^8.3.7",
     "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.2",
+    "topojson-client": "^3.1.0"
   }
 }
