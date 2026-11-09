@@ -1,12 +1,12 @@
 // Fixed diverging bins (MASTER_PLAN.md §5). Pure; no DOM.
 
 /** Margin and margin-swing bin edges, in points. Symmetric around zero. */
-export const MARGIN_EDGES = [1, 3, 6, 10, 15, 25] as const;
+export const MARGIN_EDGES = [1, 3, 6, 10, 15, 25, 40, 60] as const;
 
 /** Neutral gray, then ColorBrewer RdBu-derived ramps, lightest to darkest. */
 export const NEUTRAL_COLOR = '#e8e8e8';
-export const BLUE_RAMP = ['#d1e5f0', '#a6cee3', '#67a9cf', '#3b8bc2', '#2166ac', '#053061'] as const;
-export const RED_RAMP = ['#fddbc7', '#f4a582', '#e0765a', '#d6604d', '#b2182b', '#67001f'] as const;
+export const BLUE_RAMP = ['#d1e5f0', '#a6cee3', '#67a9cf', '#3b8bc2', '#2166ac', '#08519c', '#08306b', '#000d2e'] as const;
+export const RED_RAMP = ['#fddbc7', '#f4a582', '#e0765a', '#d6604d', '#b2182b', '#8c0f22', '#67001f', '#3a0010'] as const;
 
 export interface Bin {
   /** index from -edges.length (strongest R) through 0 (neutral) to +edges.length (strongest D) */

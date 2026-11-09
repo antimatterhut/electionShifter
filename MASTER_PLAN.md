@@ -256,7 +256,7 @@ Bins are fixed so that two maps of the same metric can be compared.
 
 | Metric | Colors | Bin edges (±) |
 |---|---|---|
-| Margin, margin swing | Red–blue (R negative, D positive) | 1, 3, 6, 10, 15, 25 pts |
+| Margin, margin swing | Red–blue (R negative, D positive) | 1, 3, 6, 10, 15, 25, 40, 60 pts |
 | Raw margin, raw shift | Red–blue | Edges from 1-2-5 values chosen by the largest absolute value in view |
 | Candidate change raw and % | Purple–green (not partisan) | % : 2, 5, 10, 20, 35, 50; raw as above |
 | Turnout change % | Purple–green | 2, 5, 10, 20, 30, 40 |

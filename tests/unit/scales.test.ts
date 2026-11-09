@@ -9,7 +9,7 @@ describe('margin scale', () => {
     expect(colorFor(0)).toBe(NEUTRAL_COLOR);
   });
   it('is symmetric: v and -v land in mirrored bins', () => {
-    for (const v of [0.5, 1, 2.9, 3, 5.99, 6, 12, 15, 24.9, 25, 60]) {
+    for (const v of [0.5, 1, 2.9, 3, 5.99, 6, 12, 15, 24.9, 25, 39.9, 40, 59.9, 60, 90]) {
       expect(binIndex(-v)).toBe(0 - binIndex(v));
     }
   });
@@ -17,6 +17,9 @@ describe('margin scale', () => {
     expect(binIndex(1)).toBe(1);
     expect(binIndex(25)).toBe(6);
     expect(binIndex(-25)).toBe(-6);
+    expect(binIndex(40)).toBe(7);
+    expect(binIndex(60)).toBe(8);
+    expect(binIndex(71.8)).toBe(8);
   });
   it('puts +23.18 (Collin) in the +15 to +25 bin', () => {
     expect(binIndex(23.18)).toBe(5);
@@ -26,14 +29,14 @@ describe('margin scale', () => {
     expect(binColor(1)).toBe(BLUE_RAMP[0]);
     expect(binColor(-1)).toBe(RED_RAMP[0]);
   });
-  it('builds 13 symmetric legend bins with distinct colors', () => {
+  it('builds 17 symmetric legend bins with distinct colors', () => {
     const bins = marginBins();
     expect(bins).toHaveLength(2 * MARGIN_EDGES.length + 1);
     expect(new Set(bins.map((b) => b.color)).size).toBe(bins.length);
-    expect(bins[0]!.label).toBe('−25 or more');
-    expect(bins[6]!.label).toBe('−1 to +1');
-    expect(bins[12]!.label).toBe('+25 or more');
-    expect(bins[1]!.label).toBe('−25 to −15');
-    expect(bins[11]!.label).toBe('+15 to +25');
+    expect(bins[0]!.label).toBe('−60 or more');
+    expect(bins[8]!.label).toBe('−1 to +1');
+    expect(bins[16]!.label).toBe('+60 or more');
+    expect(bins[3]!.label).toBe('−25 to −15');
+    expect(bins[13]!.label).toBe('+15 to +25');
   });
 });
