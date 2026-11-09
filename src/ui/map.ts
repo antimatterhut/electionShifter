@@ -44,17 +44,25 @@ export function renderMap(topo: any, paint: (unitId: string, name: string) => Un
     const p = document.createElementNS(NS, 'path');
     p.setAttribute('d', path(f) ?? '');
     p.setAttribute('data-unit', id);
-    const u = paint(id, String(f.properties?.name ?? id));
-    p.setAttribute('fill', u.fill ?? 'url(#hatch)');
-    p.setAttribute('data-fill', u.fill ?? 'missing');
-    p.setAttribute('aria-label', u.label);
+    p.setAttribute('tabindex', '0');
     p.setAttribute('stroke', '#fff');
     p.setAttribute('stroke-width', '0.5');
-    const t = document.createElementNS(NS, 'title');
-    t.textContent = u.label;
-    p.appendChild(t);
+    p.appendChild(document.createElementNS(NS, 'title'));
     g.appendChild(p);
   }
   svg.appendChild(g);
+  paintMap(svg, paint);
   return svg;
+}
+
+/** Re-applies fill and labels to every unit path (used when the metric changes). */
+export function paintMap(svg: SVGSVGElement, paint: (unitId: string, name: string) => UnitPaint): void {
+  for (const p of svg.querySelectorAll<SVGPathElement>('path[data-unit]')) {
+    const id = p.dataset.unit!;
+    const u = paint(id, id);
+    p.setAttribute('fill', u.fill ?? 'url(#hatch)');
+    p.setAttribute('data-fill', u.fill ?? 'missing');
+    p.setAttribute('aria-label', u.label);
+    p.querySelector('title')!.textContent = u.label;
+  }
 }

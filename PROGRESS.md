@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-09 by Phase 5 session
+Last updated: 2026-11-09 by Phase 6 session
 
 ## Phase checklist
 Legend: [ ] todo, [~] in progress, [x] done
@@ -10,7 +10,7 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [x] 3. Texas geometry and unit registry
 - [x] 4. Texas data pipeline
 - [x] 5. First live map (end-to-end slice)
-- [ ] 6. All metrics and explanation
+- [x] 6. All metrics and explanation
 - [ ] 7. All Texas statewide races and race picker
 - [ ] 8. County groups
 - [ ] 9. Shareable URLs
@@ -27,16 +27,16 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [ ] 20. v1 audit
 
 ## Next steps
-Start Phase 6 (All metrics and explanation) in a new session using KICKOFF_PROMPTS.md.
+Start Phase 7 (All Texas statewide races and race picker) in a new session using KICKOFF_PROMPTS.md.
 
 ## Last session summary
-- Done: Phase 5. `src/domain/scales.ts` (fixed ±1/3/6/10/15/25 bins, symmetric, neutral center), `src/ui/{data,map,legend,app}.ts`, `src/main.ts`, styles. d3-geo and topojson-client added; @playwright/test as dev dependency. Map uses geoConicEqualArea (rotate 100, parallels 27.5/35) fit to the 254 counties. Title, subtitle, amber UNOFFICIAL badge (mixed-status rule), legend with Missing hatch, source line for both races. `npm test` now ends with `playwright test` against `vite preview` at the base path; the workflow installs chromium before tests. 93 vitest tests plus 1 e2e pass locally. e2e checks: 254 paths, legend, UNOFFICIAL, Collin fill is the +15 to +25 bin with label +23.18, no console errors, no 4xx or failed requests. Screenshot is in test-results only (git-ignored).
-- Follow-up (owner request): the +25 top bin held 53 of 254 counties including the whole RGV. Margin bins extended to 1, 3, 6, 10, 15, 25, 40, 60 (17 colors); MASTER_PLAN §5 table updated to match. Collin stays in +15 to +25. Arrow map and a vs-state-average view were offered and not built (new visualization/metric needing an architect decision).
-- Bug found by a test: binIndex returned -0 for small negatives; fixed in code.
-- Not done: nothing in Phase 5. Tooltips are only the SVG title and aria-label (out of scope).
-- Mocked or stubbed: none. Race pair, state and name are fixed constants in app.ts until Phase 7.
-- Uncertain: vite.config.ts now imports from vitest/config and excludes tests/e2e from vitest. Every Texas county swings toward D in this pair (midterm vs presidential); the Phase 6 turnout notice is not built yet.
-- Deploy result: Actions run for 07835f0 concluded success (CI installed chromium and ran the full npm test including Playwright); live URL returns 200 and serves the built JS/CSS and TX.topo.json. (The earlier push f8ec644 was superseded and cancelled.)
+- Done: Phase 6. New pure modules `src/domain/format.ts` (U+2212 minus, signed/commas), `src/domain/view.ts` (per-unit metric dispatch, per-metric scale choice, tooltip detail, turnout notice rule); `src/domain/scales.ts` extended (6-step red/blue and purple/green ramps, fixed percent edges, 1-2-5 raw edges chosen from the largest value in view). UI: `controls.ts` (metric select, All votes / Two-party toggle, race select for single-race metrics, candidate A/B selects filled from race data), `tooltip.ts` (hover, keyboard focus, click/tap, Escape), `explain.ts` (one-sentence definition per metric, color meaning), `table.ts` (sortable data table in a details element), legend now per metric. All 10 §4 metrics selectable. Turnout notice appears for this pair with a button to the Turnout view. Collin tooltip shows +23.18 pts, +112,726, +30,288, +13.64%, −11.60% (plus the +119,983 / −7,257 split and −60,049). Two-party changes Collin swing to +23.75.
+- Tests: 107 vitest (14 new) and 19 Playwright e2e (one per metric, purple/green vs red/blue, two-party, candidate selectors, notice, hover tooltip, keyboard focus tooltip, tap, sortable table) pass locally via full `npm test`.
+- Not done: nothing in Phase 6 scope. Tooltip, table and controls have no URL state yet (Phase 9).
+- Mocked or stubbed: none. Race pair is still fixed in app.ts until Phase 7.
+- Judgment calls: (1) margin and raw margin are single-race metrics, so a Race select (A or B) appears for them; default is the newer race. (2) Candidate metrics default to the D-side candidate in each race (Harris → Talarico matches §4). (3) Raw-vote scales use six 1-2-5 edges from the largest absolute value in view (the §5 table says "1-2-5 values chosen by the largest absolute value"), top edge is the largest 1-2-5 value not above the max. Candidate names are title-cased from source names for display only. (4) Turnout notice rule: one race is president and the other is in a non-presidential year, or statewide total changed more than 10%.
+- Uncertain: 254 map paths are all tab stops (tabindex=0), which makes keyboard traversal long; a skip link or roving tabindex would help but is not in the plan. The tooltip is pointer-events none and positioned from the path box on focus, checked only in Chromium at desktop width, not on a real touch device.
+- Deploy result: see the next line (filled in after the push).
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).

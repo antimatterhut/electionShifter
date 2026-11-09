@@ -48,8 +48,12 @@ overwrite an existing one. Arguments after `--` are `YYYY-MM-DD [upstream sha]`:
 Full refresh and certification workflow: Phase 19.
 
 ## Status
-Phases 1-5 complete: deploy, metrics library, Texas geometry and unit registry, Texas data pipeline
-(`2024-TX-president-gen` certified, `2026-TX-us-senate-gen` unofficial), and the first live map
-(Texas 2026 Senate vs 2024 President margin swing, 254 counties).
+Phases 1-6 complete: deploy, metrics library, Texas geometry and unit registry, Texas data pipeline
+(`2024-TX-president-gen` certified, `2026-TX-us-senate-gen` unofficial), the first live map, and the
+metric selector. The map offers all ten metrics (margin swing, raw margin shift, shift from margin
+change, shift from turnout change, margin, raw margin, candidate change as % and votes, turnout change as
+% and votes), an all-votes/two-party toggle, candidate selectors, a turnout notice, a tooltip that works on
+hover, keyboard focus and tap, and a sortable data table. Red/blue is used for margin metrics only;
+candidate and turnout changes use purple/green.
 
 Live site: https://antimatterhut.github.io/electionShifter/

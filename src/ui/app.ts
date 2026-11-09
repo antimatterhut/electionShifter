@@ -1,10 +1,21 @@
 import { aggregateUnits, commonUnits } from '../domain/aggregate.ts';
-import { marginSwing } from '../domain/metrics.ts';
-import { colorFor } from '../domain/scales.ts';
-import type { RaceFile, RaceMeta } from '../domain/types.ts';
+import { fmtMetric } from '../domain/format.ts';
+import { colorForScale } from '../domain/scales.ts';
+import type { RaceMeta } from '../domain/types.ts';
+import {
+  metricValue,
+  scaleFor,
+  turnoutNotice,
+  unitDetail,
+  type ViewSpec,
+} from '../domain/view.ts';
+import { renderControls } from './controls.ts';
 import { loadManifest, loadRace, loadTopology, loadUnits } from './data.ts';
+import { METRICS } from './explain.ts';
 import { renderLegend } from './legend.ts';
-import { renderMap } from './map.ts';
+import { paintMap, renderMap } from './map.ts';
+import { renderTable } from './table.ts';
+import { attachTooltip, nameLookup, tooltipHtml } from './tooltip.ts';
 
 // First slice: fixed pair. Race selection arrives in Phase 7.
 const RACE_A = '2024-TX-president-gen';
@@ -42,8 +53,9 @@ async function render(root: HTMLElement): Promise<void> {
     loadTopology(STATE),
   ]);
   const names = new Map(units.map((u) => [u.unit_id, u.name]));
-
-  const swings = computeSwings(raceA, raceB, [...names.keys()].filter((id) => id.startsWith('48')));
+  const unitIds = [...names.keys()].filter((id) => id.startsWith('48'));
+  const labelA = `${metaA.year} ${metaA.office_label}`;
+  const labelB = `${metaB.year} ${metaB.office_label}`;
 
   // Mixed status: unofficial if either race is.
   const unofficial = metaA.status === 'unofficial' || metaB.status === 'unofficial';
@@ -58,34 +70,101 @@ async function render(root: HTMLElement): Promise<void> {
 
   root.innerHTML = `
     <header>
-      <h1>How ${STATE_NAME} shifted: ${metaB.year} ${esc(metaB.office_label)} vs. ${metaA.year} ${esc(metaA.office_label)}</h1>
-      <p class="subtitle">Blue = shifted toward Democrats. Red = shifted toward Republicans.</p>
+      <h1>How ${STATE_NAME} shifted: ${esc(labelB)} vs. ${esc(labelA)}</h1>
+      <p id="subtitle" class="subtitle"></p>
       ${badge}
     </header>
-    <div id="map-wrap"></div>
+    <section id="controls" aria-label="Controls"></section>
+    <aside id="notice" class="notice" role="note" hidden></aside>
+    <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
     <div id="legend-wrap"></div>
+    <details id="table-wrap"><summary>Data table</summary><div id="table"></div></details>
     <footer id="source">
-      <p><strong>Sources:</strong> ${metaA.year} ${esc(metaA.office_label)}: ${esc(metaA.source_label)} (${metaA.status}, as of ${esc(metaA.as_of)}).
-      ${metaB.year} ${esc(metaB.office_label)}: ${esc(metaB.source_label)} (${metaB.status}, as of ${esc(metaB.as_of)}).</p>
+      <p><strong>Sources:</strong> ${esc(labelA)}: ${esc(metaA.source_label)} (${metaA.status}, as of ${esc(metaA.as_of)}).
+      ${esc(labelB)}: ${esc(metaB.source_label)} (${metaB.status}, as of ${esc(metaB.as_of)}).</p>
     </footer>`;
+  const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
 
-  const svg = renderMap(topo, (id) => {
-    const name = names.get(id) ?? id;
-    const v = swings.get(id);
-    if (v === undefined) return { fill: null, label: `${name} County: missing data` };
-    const sign = v > 0 ? '+' : v < 0 ? '−' : '';
-    return { fill: colorFor(v), label: `${name} County: swing ${sign}${Math.abs(v).toFixed(2)} pts` };
+  // Turnout notice: depends on the races and the units in view, not on the metric.
+  const common = commonUnits(raceA, raceB, unitIds);
+  const noticeText = turnoutNotice(
+    metaA,
+    metaB,
+    aggregateUnits(raceA, common).totals?.t ?? 0,
+    aggregateUnits(raceB, common).totals?.t ?? 0,
+  );
+
+  let spec: ViewSpec = { metric: 'margin_swing', basis: 'total', which: 'B', candA: null, candB: null };
+  const tooltipLabels = {
+    a: labelA,
+    b: labelB,
+    nameA: nameLookup(raceA.candidates),
+    nameB: nameLookup(raceB.candidates),
+  };
+  const unitName = (id: string) => names.get(id) ?? id;
+
+  const svg = renderMap(topo, () => ({ fill: null, label: '' }));
+  $('#map-wrap').appendChild(svg);
+  attachTooltip(svg, $('#tooltip'), (id) =>
+    tooltipHtml(unitName(id), unitDetail(spec, raceA, raceB, id), tooltipLabels),
+  );
+  const updateTable = renderTable($('#table'));
+
+  const sync = renderControls($('#controls'), spec, raceA, raceB, { a: labelA, b: labelB }, (next) => {
+    spec = next;
+    update();
   });
-  root.querySelector('#map-wrap')!.appendChild(svg);
-  root.querySelector('#legend-wrap')!.appendChild(renderLegend());
-}
 
-/** Margin swing (B − A) per unit; units without both races' data are omitted. */
-export function computeSwings(a: RaceFile, b: RaceFile, unitIds: string[]): Map<string, number> {
-  const out = new Map<string, number>();
-  for (const id of commonUnits(a, b, unitIds)) {
-    const r = marginSwing(aggregateUnits(a, [id]).totals, aggregateUnits(b, [id]).totals);
-    if (r.value !== null) out.set(id, r.value);
+  function update(): void {
+    sync(spec);
+    const info = METRICS[spec.metric];
+    $('#subtitle').textContent = info.colors;
+
+    const values = new Map<string, number | null>();
+    for (const id of unitIds) values.set(id, metricValue(spec, raceA, raceB, id).value);
+    const scale = scaleFor(
+      spec.metric,
+      [...values.values()].filter((v): v is number => v !== null),
+    );
+
+    paintMap(svg, (id) => {
+      const v = values.get(id);
+      const name = unitName(id);
+      if (v === null || v === undefined) return { fill: null, label: `${name} County: missing data` };
+      const text = fmtMetric(spec.metric, v);
+      return { fill: colorForScale(v, scale), label: `${name} County: ${info.short} ${text}` };
+    });
+
+    const legendWrap = $('#legend-wrap');
+    legendWrap.replaceChildren(renderLegend(spec.metric, scale, spec.basis, labelA, labelB));
+
+    updateTable(
+      unitIds.map((id) => {
+        const v = values.get(id) ?? null;
+        return {
+          id,
+          name: unitName(id),
+          value: v,
+          text: v === null ? 'Missing' : fmtMetric(spec.metric, v),
+        };
+      }),
+      info.label,
+    );
+
+    const notice = $('#notice');
+    const showNotice = noticeText !== null;
+    notice.hidden = !showNotice;
+    if (showNotice) {
+      const turnoutView = spec.metric === 'turnout_change_pct';
+      notice.innerHTML = `${esc(noticeText)} ${
+        turnoutView ? '' : '<button type="button" id="goto-turnout">Show the Turnout view</button>'
+      }`;
+      notice.querySelector('#goto-turnout')?.addEventListener('click', () => {
+        spec = { ...spec, metric: 'turnout_change_pct' };
+        update();
+      });
+    }
   }
-  return out;
+
+  update();
 }
