@@ -135,16 +135,25 @@ describe('validation tiers', () => {
     expect(tier2(race(A), refs)).toBeLessThanOrEqual(0.05);
   });
 
-  it('reference rows equal the pinned MEDSL raw file', () => {
-    const medsl = csv<Record<string, string>>('data/raw/medsl-2024/2026-11-09/2024-president-state.csv').filter(
-      (r) => r.state_po === 'TX' && r.writein === 'FALSE',
-    );
+  it('reference rows equal the pinned MEDSL raw files', () => {
+    const files: Record<string, string> = {
+      '2024-TX-president-gen': '2024-president-state.csv',
+      '2024-TX-us-senate-gen': '2024-senate-state.csv',
+    };
     expect(refs.length).toBeGreaterThan(0);
+    expect(new Set(refs.map((r) => r.race_id))).toEqual(new Set(Object.keys(files)));
     for (const ref of refs) {
-      const src = medsl.filter((r) => r.candidate!.startsWith(ref.candidate_match));
-      expect(src).toHaveLength(1);
+      const medsl = csv<Record<string, string>>(`data/raw/medsl-2024/2026-11-09b/${files[ref.race_id]}`).filter(
+        (r) => r.state_po === 'TX' && r.writein === 'FALSE' && r.mode === 'TOTAL',
+      );
+      const src = medsl.filter((r) => r.candidate!.toUpperCase().includes(ref.candidate_match));
+      expect(src, ref.candidate_match).toHaveLength(1);
       expect(src[0]!.votes).toBe(ref.votes);
     }
+  });
+
+  it('Tier 2 (2024 Senate): county sums match the independent MEDSL totals', () => {
+    expect(tier2(race('2024-TX-us-senate-gen'), refs)).toBeLessThanOrEqual(0.05);
   });
 
   it('a 0.1% error in a county would be caught by Tier 2', () => {
@@ -155,16 +164,20 @@ describe('validation tiers', () => {
 });
 
 describe('manifest', () => {
-  it('lists both races with correct status, validation and unit counts', () => {
+  it('lists every race, sorted, with correct status, validation and unit counts', () => {
     expect(manifest.schema_version).toBe(1);
     expect(manifest.geo_version).toBe('2025c');
     expect(manifest.build_hash).toMatch(/^[0-9a-f]{64}$/);
-    expect(manifest.races.map((r) => r.race_id)).toEqual([A, B]);
-    const a = manifest.races[0]!;
-    const b = manifest.races[1]!;
-    expect(a).toMatchObject({ status: 'certified', unit_count: 254, has_dem: true, has_rep: true });
+    const ids = manifest.races.map((r) => r.race_id);
+    expect(ids).toEqual([...ids].sort());
+    expect(ids).toContain(A);
+    expect(ids).toContain(B);
+    for (const r of manifest.races) expect(r).toMatchObject({ unit_count: 254, has_dem: true, has_rep: true });
+    const a = manifest.races.find((r) => r.race_id === A)!;
+    const b = manifest.races.find((r) => r.race_id === B)!;
+    expect(a).toMatchObject({ status: 'certified' });
     expect(a.validation).toMatchObject({ tier1: 'na', tier2: 'pass' });
-    expect(b).toMatchObject({ status: 'unofficial', as_of: '2026-11-06', unit_count: 254, has_dem: true, has_rep: true });
+    expect(b).toMatchObject({ status: 'unofficial', as_of: '2026-11-06' });
     expect(b.validation).toMatchObject({ tier1: 'pass', tier2: 'pending' });
   });
 

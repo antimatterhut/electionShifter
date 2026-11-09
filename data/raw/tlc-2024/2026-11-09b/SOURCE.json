@@ -1,0 +1,67 @@
+{
+  "source_id": "tlc-2024",
+  "snapshot": "2026-11-09b",
+  "retrieved_at": "2026-11-09T12:07:32.233Z",
+  "method": "scripted",
+  "urls": [
+    "https://ted.capitol.texas.gov/api/Offices/510/1/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/2/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/44/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/49/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/51/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/53/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/57/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/64/vtd",
+    "https://ted.capitol.texas.gov/api/Offices/510/65/vtd"
+  ],
+  "upstream_commit": null,
+  "license": "CC BY (Texas Legislative Council)",
+  "files": [
+    {
+      "path": "tlc-1.csv",
+      "sha256": "cd48dac7c363f1cd66fcd30ffc81ce06923dd313bf908f6626bc485481257b88",
+      "bytes": 295118
+    },
+    {
+      "path": "tlc-2.csv",
+      "sha256": "03464ba753587d2e4008b144a2f388bcf69882fb6147eac908c90ed56fc01937",
+      "bytes": 295700
+    },
+    {
+      "path": "tlc-44.csv",
+      "sha256": "3349deb5f223c6314c983bb6d5a4e1adf5baceb8963bdbfe44b4acf165e7780b",
+      "bytes": 302235
+    },
+    {
+      "path": "tlc-49.csv",
+      "sha256": "3a03cb34aff1fce4de167a552e9e2ae44d3878eb35019ee08894420414adfa00",
+      "bytes": 230216
+    },
+    {
+      "path": "tlc-51.csv",
+      "sha256": "a023cc4db60f4bc298fcf7bbae09603a36bc17202bcf4c3560856573f2a52480",
+      "bytes": 230220
+    },
+    {
+      "path": "tlc-53.csv",
+      "sha256": "eb61fbc9055ab1803b4db5a0c38b984b842c6aa5736d39dace5943b81ea6c4b6",
+      "bytes": 257067
+    },
+    {
+      "path": "tlc-57.csv",
+      "sha256": "5e307a8298eade6285ad5c61ef4f212dcfa6a9a0d6d6245e454cff84088a0e72",
+      "bytes": 230224
+    },
+    {
+      "path": "tlc-64.csv",
+      "sha256": "c1bef438df316dfc630da08b781fd82e04806e272b6ee519a3d238d6e8302d15",
+      "bytes": 230140
+    },
+    {
+      "path": "tlc-65.csv",
+      "sha256": "7339b1adf8aae9c276d3336b1a33b754bfd1ebd056afb328d04b26453258e3df",
+      "bytes": 230101
+    }
+  ],
+  "notes": "Texas 2024 general election results by VTD. Statewide offices only; office ids are listed in pipeline/fetch/tlc.ts."
+}

@@ -1,0 +1,25 @@
+{
+  "source_id": "medsl-2024",
+  "snapshot": "2026-11-09b",
+  "retrieved_at": "2026-11-09T12:07:32.820Z",
+  "method": "scripted",
+  "urls": [
+    "https://raw.githubusercontent.com/MEDSL/2024-elections-official/df531089c78e6d0098db1a6bfb3849a066a06995/2024-president-state.csv",
+    "https://raw.githubusercontent.com/MEDSL/2024-elections-official/df531089c78e6d0098db1a6bfb3849a066a06995/2024-senate-state.csv"
+  ],
+  "upstream_commit": "df531089c78e6d0098db1a6bfb3849a066a06995",
+  "license": "Repository has no license file; used only as an independent cross-check (Tier 2), not republished",
+  "files": [
+    {
+      "path": "2024-president-state.csv",
+      "sha256": "d3170796305a9ee576d6362fbfdd9c4ffdf888566361b4b95f4d5e9d019a6348",
+      "bytes": 75635
+    },
+    {
+      "path": "2024-senate-state.csv",
+      "sha256": "e50fbfc62a095b9fe0d5178b7c09176b5cb8b7d320e08dd31e54987b9e3fcd76",
+      "bytes": 18828
+    }
+  ],
+  "notes": "MEDSL 2024 President and U.S. Senate state totals. Independent reference for Tier 2 validation."
+}

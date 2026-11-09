@@ -38,7 +38,7 @@ overwrite an existing one. Arguments after `--` are `YYYY-MM-DD [upstream sha]`:
   produced the golden values; the SHA is recorded in SOURCE.json).
 - `npm run data:fetch:tlc`: Texas Capitol Data Portal 2024 VTD files (President = id 1, Senate = id 2).
 - `npm run data:fetch:medsl`: MEDSL 2024 President state totals, the independent Tier 2 reference.
-- `npm run data:reference` regenerates `data/reference/statewide_totals.csv` from the MEDSL snapshot.
+- `npm run data:reference` regenerates `data/reference/statewide_totals.csv` for 2024 President and Senate from the MEDSL snapshot.
 - `npm run data:build` rebuilds units, geometry, race files and `manifest.json` under `public/data/v1/`.
   Never hand-edit those files. An unmatched county label fails the build: add a row to
   `data/crosswalk/aliases.csv`. Contest-to-race mapping, status and as-of date live in
@@ -48,12 +48,20 @@ overwrite an existing one. Arguments after `--` are `YYYY-MM-DD [upstream sha]`:
 Full refresh and certification workflow: Phase 19.
 
 ## Status
-Phases 1-6 complete: deploy, metrics library, Texas geometry and unit registry, Texas data pipeline
+Phases 1-7 complete: deploy, metrics library, Texas geometry and unit registry, Texas data pipeline
 (`2024-TX-president-gen` certified, `2026-TX-us-senate-gen` unofficial), the first live map, and the
 metric selector. The map offers all ten metrics (margin swing, raw margin shift, shift from margin
 change, shift from turnout change, margin, raw margin, candidate change as % and votes, turnout change as
 % and votes), an all-votes/two-party toggle, candidate selectors, a turnout notice, a tooltip that works on
 hover, keyboard focus and tap, and a sortable data table. Red/blue is used for margin metrics only;
 candidate and turnout changes use purple/green.
+
+Phase 7 adds every Texas statewide race (2024: President, Senate, Railroad Commissioner, Supreme Court
+and Court of Criminal Appeals seats; 2026: all statewide executive offices, Supreme Court, Court of Criminal
+Appeals and 15th Court of Appeals) and a two-step race picker (year, then race) for each side of the
+comparison. A margin metric on a pair where a race has no Democratic or no Republican candidate shows
+"Not comparable: no D–R contest". To add a race, add a row to `data/overrides/race_map.csv`, run
+`npm run data:build`, and commit the output. Only 2024 President and Senate are `certified`; the other 2024
+offices have no independent statewide total on file yet and are labeled unofficial.
 
 Live site: https://antimatterhut.github.io/electionShifter/

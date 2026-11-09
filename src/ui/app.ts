@@ -1,9 +1,11 @@
 import { aggregateUnits, commonUnits } from '../domain/aggregate.ts';
 import { fmtMetric } from '../domain/format.ts';
+import { raceLabel } from '../domain/races.ts';
 import { colorForScale } from '../domain/scales.ts';
-import type { RaceMeta } from '../domain/types.ts';
+import type { RaceFile, RaceMeta } from '../domain/types.ts';
 import {
   metricValue,
+  notComparable,
   scaleFor,
   turnoutNotice,
   unitDetail,
@@ -14,12 +16,13 @@ import { loadManifest, loadRace, loadTopology, loadUnits } from './data.ts';
 import { METRICS } from './explain.ts';
 import { renderLegend } from './legend.ts';
 import { paintMap, renderMap } from './map.ts';
+import { renderRacePicker, type RacePair } from './racepicker.ts';
 import { renderTable } from './table.ts';
 import { attachTooltip, nameLookup, tooltipHtml } from './tooltip.ts';
 
-// First slice: fixed pair. Race selection arrives in Phase 7.
-const RACE_A = '2024-TX-president-gen';
-const RACE_B = '2026-TX-us-senate-gen';
+// Default pair when the page opens. Race ids only, never candidate names.
+const DEFAULT_A = '2024-TX-president-gen';
+const DEFAULT_B = '2026-TX-us-senate-gen';
 const STATE = 'TX';
 const STATE_NAME = 'Texas';
 
@@ -42,86 +45,127 @@ export async function start(root: HTMLElement): Promise<void> {
   }
 }
 
+interface Pair {
+  metaA: RaceMeta;
+  metaB: RaceMeta;
+  raceA: RaceFile;
+  raceB: RaceFile;
+  labelA: string;
+  labelB: string;
+}
+
 async function render(root: HTMLElement): Promise<void> {
   const manifest = await loadManifest();
-  const metaA = find(manifest.races, RACE_A);
-  const metaB = find(manifest.races, RACE_B);
-  const [raceA, raceB, units, topo] = await Promise.all([
-    loadRace(metaA),
-    loadRace(metaB),
-    loadUnits(),
-    loadTopology(STATE),
-  ]);
+  const races = manifest.races.filter((r) => r.state_po === STATE);
+  const [units, topo] = await Promise.all([loadUnits(), loadTopology(STATE)]);
   const names = new Map(units.map((u) => [u.unit_id, u.name]));
   const unitIds = [...names.keys()].filter((id) => id.startsWith('48'));
-  const labelA = `${metaA.year} ${metaA.office_label}`;
-  const labelB = `${metaB.year} ${metaB.office_label}`;
-
-  // Mixed status: unofficial if either race is.
-  const unofficial = metaA.status === 'unofficial' || metaB.status === 'unofficial';
-  const asOf = [metaA, metaB]
-    .filter((m) => m.status === 'unofficial')
-    .map((m) => m.as_of)
-    .sort()
-    .pop();
-  const badge = unofficial
-    ? `<span class="badge unofficial">UNOFFICIAL as of ${esc(asOf ?? '')}</span>`
-    : `<span class="badge certified">CERTIFIED</span>`;
+  const unitName = (id: string) => names.get(id) ?? id;
 
   root.innerHTML = `
     <header>
-      <h1>How ${STATE_NAME} shifted: ${esc(labelB)} vs. ${esc(labelA)}</h1>
+      <h1 id="title"></h1>
       <p id="subtitle" class="subtitle"></p>
-      ${badge}
+      <span id="badge"></span>
     </header>
+    <section id="picker" aria-label="Choose two races"></section>
     <section id="controls" aria-label="Controls"></section>
     <aside id="notice" class="notice" role="note" hidden></aside>
+    <p id="not-comparable" class="notice" role="status" hidden></p>
     <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
     <div id="legend-wrap"></div>
     <details id="table-wrap"><summary>Data table</summary><div id="table"></div></details>
-    <footer id="source">
-      <p><strong>Sources:</strong> ${esc(labelA)}: ${esc(metaA.source_label)} (${metaA.status}, as of ${esc(metaA.as_of)}).
-      ${esc(labelB)}: ${esc(metaB.source_label)} (${metaB.status}, as of ${esc(metaB.as_of)}).</p>
-    </footer>`;
+    <footer id="source"></footer>`;
   const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
 
-  // Turnout notice: depends on the races and the units in view, not on the metric.
-  const common = commonUnits(raceA, raceB, unitIds);
-  const noticeText = turnoutNotice(
-    metaA,
-    metaB,
-    aggregateUnits(raceA, common).totals?.t ?? 0,
-    aggregateUnits(raceB, common).totals?.t ?? 0,
-  );
-
-  let spec: ViewSpec = { metric: 'margin_swing', basis: 'total', which: 'B', candA: null, candB: null };
-  const tooltipLabels = {
-    a: labelA,
-    b: labelB,
-    nameA: nameLookup(raceA.candidates),
-    nameB: nameLookup(raceB.candidates),
+  const cache = new Map<string, Promise<RaceFile>>();
+  const raceFile = (m: RaceMeta) => {
+    let p = cache.get(m.race_id);
+    if (p === undefined) {
+      p = loadRace(m);
+      cache.set(m.race_id, p);
+      p.catch(() => cache.delete(m.race_id));
+    }
+    return p;
   };
-  const unitName = (id: string) => names.get(id) ?? id;
+
+  let pair!: Pair;
+  let spec: ViewSpec = { metric: 'margin_swing', basis: 'total', which: 'B', candA: null, candB: null };
+  let noticeText: string | null = null;
+  let syncControls: (s: ViewSpec) => void = () => {};
 
   const svg = renderMap(topo, () => ({ fill: null, label: '' }));
   $('#map-wrap').appendChild(svg);
   attachTooltip(svg, $('#tooltip'), (id) =>
-    tooltipHtml(unitName(id), unitDetail(spec, raceA, raceB, id), tooltipLabels),
+    tooltipHtml(unitName(id), unitDetail(spec, pair.raceA, pair.raceB, id), {
+      a: pair.labelA,
+      b: pair.labelB,
+      nameA: nameLookup(pair.raceA.candidates),
+      nameB: nameLookup(pair.raceB.candidates),
+    }),
   );
   const updateTable = renderTable($('#table'));
 
-  const sync = renderControls($('#controls'), spec, raceA, raceB, { a: labelA, b: labelB }, (next) => {
-    spec = next;
+  let token = 0;
+  async function showPair(ids: RacePair): Promise<void> {
+    const mine = ++token;
+    const metaA = find(races, ids.a);
+    const metaB = find(races, ids.b);
+    const [raceA, raceB] = await Promise.all([raceFile(metaA), raceFile(metaB)]);
+    if (mine !== token) return; // a newer pick superseded this one
+    pair = { metaA, metaB, raceA, raceB, labelA: raceLabel(metaA), labelB: raceLabel(metaB) };
+    const { labelA, labelB } = pair;
+
+    const sameYear = metaA.year === metaB.year;
+    $('#title').textContent = sameYear
+      ? `How ${STATE_NAME} voted differently: ${labelB} vs. ${labelA}`
+      : `How ${STATE_NAME} shifted: ${labelB} vs. ${labelA}`;
+
+    // Mixed status: unofficial if either race is.
+    const unofficial = metaA.status === 'unofficial' || metaB.status === 'unofficial';
+    const asOf = [metaA, metaB]
+      .filter((m) => m.status === 'unofficial')
+      .map((m) => m.as_of)
+      .sort()
+      .pop();
+    $('#badge').innerHTML = unofficial
+      ? `<span class="badge unofficial">UNOFFICIAL as of ${esc(asOf ?? '')}</span>`
+      : `<span class="badge certified">CERTIFIED</span>`;
+
+    const note = (m: RaceMeta) => (m.method_note ? ` ${esc(m.method_note)}` : '');
+    $('#source').innerHTML = `<p><strong>Sources:</strong> ${esc(labelA)}: ${esc(metaA.source_label)} (${metaA.status}, as of ${esc(metaA.as_of)}).${note(metaA)}
+      ${esc(labelB)}: ${esc(metaB.source_label)} (${metaB.status}, as of ${esc(metaB.as_of)}).${note(metaB)}</p>`;
+
+    // Turnout notice depends on the races and units in view, not on the metric.
+    const common = commonUnits(raceA, raceB, unitIds);
+    noticeText = turnoutNotice(
+      metaA,
+      metaB,
+      aggregateUnits(raceA, common).totals?.t ?? 0,
+      aggregateUnits(raceB, common).totals?.t ?? 0,
+    );
+
+    spec = { ...spec, candA: null, candB: null };
+    syncControls = renderControls($('#controls'), spec, raceA, raceB, { a: labelA, b: labelB }, (next) => {
+      spec = next;
+      update();
+    });
     update();
-  });
+  }
 
   function update(): void {
-    sync(spec);
+    const { raceA, raceB, labelA, labelB } = pair;
+    syncControls(spec);
     const info = METRICS[spec.metric];
     $('#subtitle').textContent = info.colors;
 
+    const blocked = notComparable(spec, raceA, raceB, labelA, labelB);
+    const msg = $('#not-comparable');
+    msg.hidden = blocked === null;
+    msg.textContent = blocked ?? '';
+
     const values = new Map<string, number | null>();
-    for (const id of unitIds) values.set(id, metricValue(spec, raceA, raceB, id).value);
+    for (const id of unitIds) values.set(id, blocked === null ? metricValue(spec, raceA, raceB, id).value : null);
     const scale = scaleFor(
       spec.metric,
       [...values.values()].filter((v): v is number => v !== null),
@@ -130,13 +174,15 @@ async function render(root: HTMLElement): Promise<void> {
     paintMap(svg, (id) => {
       const v = values.get(id);
       const name = unitName(id);
+      if (blocked !== null) return { fill: null, label: `${name} County: ${blocked}` };
       if (v === null || v === undefined) return { fill: null, label: `${name} County: missing data` };
       const text = fmtMetric(spec.metric, v);
       return { fill: colorForScale(v, scale), label: `${name} County: ${info.short} ${text}` };
     });
 
-    const legendWrap = $('#legend-wrap');
-    legendWrap.replaceChildren(renderLegend(spec.metric, scale, spec.basis, labelA, labelB));
+    $('#legend-wrap').replaceChildren(
+      blocked === null ? renderLegend(spec.metric, scale, spec.basis, labelA, labelB) : document.createElement('div'),
+    );
 
     updateTable(
       unitIds.map((id) => {
@@ -145,7 +191,7 @@ async function render(root: HTMLElement): Promise<void> {
           id,
           name: unitName(id),
           value: v,
-          text: v === null ? 'Missing' : fmtMetric(spec.metric, v),
+          text: blocked !== null ? 'Not comparable' : v === null ? 'Missing' : fmtMetric(spec.metric, v),
         };
       }),
       info.label,
@@ -156,7 +202,7 @@ async function render(root: HTMLElement): Promise<void> {
     notice.hidden = !showNotice;
     if (showNotice) {
       const turnoutView = spec.metric === 'turnout_change_pct';
-      notice.innerHTML = `${esc(noticeText)} ${
+      notice.innerHTML = `${esc(noticeText ?? '')} ${
         turnoutView ? '' : '<button type="button" id="goto-turnout">Show the Turnout view</button>'
       }`;
       notice.querySelector('#goto-turnout')?.addEventListener('click', () => {
@@ -166,5 +212,13 @@ async function render(root: HTMLElement): Promise<void> {
     }
   }
 
-  update();
+  let ids: RacePair = { a: find(races, DEFAULT_A).race_id, b: find(races, DEFAULT_B).race_id };
+  renderRacePicker($('#picker'), races, ids, (next) => {
+    ids = next;
+    showPair(ids).catch((e) => {
+      $('#not-comparable').hidden = false;
+      $('#not-comparable').textContent = `Could not load those races: ${String(e)}`;
+    });
+  });
+  await showPair(ids);
 }

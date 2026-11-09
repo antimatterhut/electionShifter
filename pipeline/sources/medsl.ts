@@ -16,7 +16,7 @@ export const REFERENCE_COLUMNS = [
 /**
  * Independent statewide totals from the MEDSL state file, for named (non write-in) candidates.
  * Mode rule: use TOTAL if present for that candidate, otherwise sum all modes.
- * candidate_match is the surname before the comma, matched against candidate names in Tier 2.
+ * candidate_match is the surname (before the comma, or the last word when there is no comma), matched against candidate names in Tier 2.
  */
 export function medslReference(
   csvText: string,
@@ -44,7 +44,8 @@ export function medslReference(
     }
     const totals = new Set(rs.map((r) => r.totalvotes));
     if (totals.size !== 1) throw new Error(`MEDSL totalvotes disagree for ${cand}`);
-    const surname = cand.split(',')[0]!.trim().toUpperCase();
+    // "LAST, FIRST" in the president file; "FIRST LAST" in the senate file.
+    const surname = (cand.includes(',') ? cand.split(',')[0]! : cand.trim().split(/\s+/).pop()!).trim().toUpperCase();
     out.push({
       race_id: q.race_id,
       candidate_match: surname,

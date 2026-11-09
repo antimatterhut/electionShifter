@@ -210,3 +210,35 @@ export function turnoutNotice(
     ? `Fewer people voted in ${metaB.year}, which shrinks raw vote numbers everywhere. Margin swing isn't affected by total turnout the same way. See the Turnout view.`
     : `More people voted in ${metaB.year}, which inflates raw vote numbers everywhere. Margin swing isn't affected by total turnout the same way. See the Turnout view.`;
 }
+
+export const NOT_COMPARABLE = 'Not comparable: no D–R contest';
+
+/** True when the race has both a D-side and an R-side candidate (aligned or by party). */
+export function hasDrContest(race: RaceFile): boolean {
+  const sides = new Set(race.candidates.map((c) => sideOf(c)));
+  return sides.has('D') && sides.has('R');
+}
+
+/**
+ * Why the chosen metric cannot be drawn for this pair, or null when it can. Margin-based metrics
+ * need a D and an R candidate in every race they read; candidate and turnout metrics never do.
+ */
+export function notComparable(
+  spec: ViewSpec,
+  a: RaceFile,
+  b: RaceFile,
+  labelA: string,
+  labelB: string,
+): string | null {
+  if (CANDIDATE_METRICS.has(spec.metric) || spec.metric === 'turnout_change_pct' || spec.metric === 'turnout_change_raw') {
+    return null;
+  }
+  const needed: [RaceFile, string][] = SINGLE_RACE_METRICS.has(spec.metric)
+    ? [spec.which === 'A' ? [a, labelA] : [b, labelB]]
+    : [
+        [a, labelA],
+        [b, labelB],
+      ];
+  const bad = needed.filter(([r]) => !hasDrContest(r)).map(([, l]) => l);
+  return bad.length === 0 ? null : `${NOT_COMPARABLE} (${bad.join(', ')})`;
+}

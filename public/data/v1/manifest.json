@@ -1,8 +1,86 @@
 {
   "schema_version": 1,
   "geo_version": "2025c",
-  "build_hash": "58652f9989434520917ead9a95448e0e22ab1a2975573a2a24ce72207e456230",
+  "build_hash": "8f3f0f294b4153eacc8accb3a90d63700208e80d9a7a2a567d41b2e2cd55c569",
   "races": [
+    {
+      "race_id": "2024-TX-cca-p7-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "office_label": "Court of Criminal Appeals, Place 7",
+      "seat": "Place 7",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-cca-p7-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2024-TX-cca-p8-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "office_label": "Court of Criminal Appeals, Place 8",
+      "seat": "Place 8",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-cca-p8-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2024-TX-cca-presiding-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "office_label": "Court of Criminal Appeals, Presiding Judge",
+      "seat": "Presiding Judge",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-cca-presiding-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
     {
       "race_id": "2024-TX-president-gen",
       "year": 2024,
@@ -27,6 +105,578 @@
         "tier1": "na",
         "tier2": "pass",
         "max_diff_pct": 0.0036
+      }
+    },
+    {
+      "race_id": "2024-TX-railroad-commissioner-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "railroad-commissioner",
+      "office_label": "Railroad Commissioner",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-railroad-commissioner-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2024-TX-supreme-court-p2-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Place 2",
+      "seat": "Place 2",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-supreme-court-p2-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2024-TX-supreme-court-p4-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Place 4",
+      "seat": "Place 4",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-supreme-court-p4-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2024-TX-supreme-court-p6-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Place 6",
+      "seat": "Place 6",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-supreme-court-p6-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": "No independent statewide total is on file for this office yet, so it is not marked certified.",
+      "validation": {
+        "tier1": "na",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2024-TX-us-senate-gen",
+      "year": 2024,
+      "election_date": "2024-11-05",
+      "state_po": "TX",
+      "office": "us-senate",
+      "office_label": "U.S. Senate",
+      "seat": null,
+      "stage": "gen",
+      "status": "certified",
+      "as_of": "2026-11-09",
+      "source_ids": [
+        "tlc-2024"
+      ],
+      "source_label": "Texas Legislative Council Capitol Data Portal (VTD results summed to counties)",
+      "file": "races/2024/TX/2024-TX-us-senate-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "na",
+        "tier2": "pass",
+        "max_diff_pct": 0.0356
+      }
+    },
+    {
+      "race_id": "2026-TX-agriculture-commissioner-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "agriculture-commissioner",
+      "office_label": "Agriculture Commissioner",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-agriculture-commissioner-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-attorney-general-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "attorney-general",
+      "office_label": "Attorney General",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-attorney-general-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-cca-p3-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "office_label": "Court of Criminal Appeals, Place 3",
+      "seat": "Place 3",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-cca-p3-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-cca-p4-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "office_label": "Court of Criminal Appeals, Place 4",
+      "seat": "Place 4",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-cca-p4-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-cca-p9-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "office_label": "Court of Criminal Appeals, Place 9",
+      "seat": "Place 9",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-cca-p9-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-coa15-chief-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "fifteenth-court-of-appeals",
+      "office_label": "15th Court of Appeals, Chief Justice",
+      "seat": "Chief Justice",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-coa15-chief-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-coa15-p2-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "fifteenth-court-of-appeals",
+      "office_label": "15th Court of Appeals, Place 2",
+      "seat": "Place 2",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-coa15-p2-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-coa15-p3-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "fifteenth-court-of-appeals",
+      "office_label": "15th Court of Appeals, Place 3",
+      "seat": "Place 3",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-coa15-p3-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-comptroller-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "comptroller",
+      "office_label": "Comptroller",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-comptroller-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-governor-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "governor",
+      "office_label": "Governor",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-governor-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-land-commissioner-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "land-commissioner",
+      "office_label": "Land Commissioner",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-land-commissioner-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-lt-governor-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "lt-governor",
+      "office_label": "Lieutenant Governor",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-lt-governor-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-railroad-commissioner-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "railroad-commissioner",
+      "office_label": "Railroad Commissioner",
+      "seat": null,
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-railroad-commissioner-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-supreme-court-chief-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Chief Justice",
+      "seat": "Chief Justice",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-supreme-court-chief-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-supreme-court-p2-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Place 2 (unexpired term)",
+      "seat": "Place 2 (unexpired term)",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-supreme-court-p2-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-supreme-court-p7-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Place 7",
+      "seat": "Place 7",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-supreme-court-p7-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
+      }
+    },
+    {
+      "race_id": "2026-TX-supreme-court-p8-gen",
+      "year": 2026,
+      "election_date": "2026-11-03",
+      "state_po": "TX",
+      "office": "supreme-court",
+      "office_label": "Supreme Court, Place 8",
+      "seat": "Place 8",
+      "stage": "gen",
+      "status": "unofficial",
+      "as_of": "2026-11-06",
+      "source_ids": [
+        "pushbuild-2026"
+      ],
+      "source_label": "Texas Secretary of State election night feed via pushbuild/us-2026-election-results",
+      "file": "races/2026/TX/2026-TX-supreme-court-p8-gen.json",
+      "unit_count": 254,
+      "has_dem": true,
+      "has_rep": true,
+      "method_note": null,
+      "validation": {
+        "tier1": "pass",
+        "tier2": "pending",
+        "max_diff_pct": 0
       }
     },
     {
@@ -60,7 +710,182 @@
     {
       "year": 2024,
       "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
       "office": "president",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "railroad-commissioner",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "supreme-court",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "supreme-court",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "supreme-court",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2024,
+      "state_po": "TX",
+      "office": "us-senate",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "agriculture-commissioner",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "attorney-general",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "court-of-criminal-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "fifteenth-court-of-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "fifteenth-court-of-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "fifteenth-court-of-appeals",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "comptroller",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "governor",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "land-commissioner",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "lt-governor",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "railroad-commissioner",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "supreme-court",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "supreme-court",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "supreme-court",
+      "state": "ok",
+      "note": ""
+    },
+    {
+      "year": 2026,
+      "state_po": "TX",
+      "office": "supreme-court",
       "state": "ok",
       "note": ""
     },

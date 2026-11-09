@@ -36,22 +36,31 @@ export function referencePath(root: string): string {
   return join(root, 'data/reference/statewide_totals.csv');
 }
 
-/** Regenerate the Tier 2 reference file for 2024 President from the pinned MEDSL snapshot. */
+/** MEDSL state files that serve as the independent Tier 2 reference, by race. */
+const MEDSL_REFERENCE_RACES = [
+  { race_id: '2024-TX-president-gen', file: '2024-president-state.csv', office: 'US PRESIDENT' },
+  { race_id: '2024-TX-us-senate-gen', file: '2024-senate-state.csv', office: 'US SENATE' },
+];
+
+/** Regenerate the Tier 2 reference file for 2024 President and Senate from the pinned MEDSL snapshot. */
 export function writeReference(root: string): string {
-  const map = readCsv<RaceMapRow>(join(root, 'data/overrides/race_map.csv')).find((m) => m.race_id === '2024-TX-president-gen');
-  if (map === undefined) throw new Error('2024-TX-president-gen missing from race_map.csv');
+  const map = readCsv<RaceMapRow>(join(root, 'data/overrides/race_map.csv'));
   const dir = snapshotFor(root, MEDSL_SOURCE_ID);
   const snapshot = dir.split(/[\\/]/).pop()!;
-  const rows = medslReference(readFileSync(join(dir, '2024-president-state.csv'), 'utf8'), {
-    race_id: map.race_id,
-    state_po: map.state_po,
-    office: 'US PRESIDENT',
-    source_url: `https://github.com/${MEDSL_REPO}/blob/${MEDSL_PINNED_SHA}/2024-president-state.csv`,
-    retrieved: snapshot,
-    commit: MEDSL_PINNED_SHA,
-  });
   const lines = [REFERENCE_COLUMNS.join(',')];
-  for (const r of rows) lines.push(REFERENCE_COLUMNS.map((c) => csvCell(r[c])).join(','));
+  for (const q of MEDSL_REFERENCE_RACES) {
+    const m = map.find((x) => x.race_id === q.race_id);
+    if (m === undefined) throw new Error(`${q.race_id} missing from race_map.csv`);
+    const rows = medslReference(readFileSync(join(dir, q.file), 'utf8'), {
+      race_id: m.race_id,
+      state_po: m.state_po,
+      office: q.office,
+      source_url: `https://github.com/${MEDSL_REPO}/blob/${MEDSL_PINNED_SHA}/${q.file}`,
+      retrieved: snapshot,
+      commit: MEDSL_PINNED_SHA,
+    });
+    for (const r of rows) lines.push(REFERENCE_COLUMNS.map((c) => csvCell(r[c])).join(','));
+  }
   const out = referencePath(root);
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, lines.join('\n') + '\n');
