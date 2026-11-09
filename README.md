@@ -23,9 +23,15 @@ Push to `main`. GitHub Actions runs the tests and publishes `dist/` to GitHub Pa
 (Settings → Pages → Source must be "GitHub Actions").
 
 ## Data refresh
-Not yet implemented (Phase 19).
+Geometry (Phase 3):
+-  downloads the Census county file into a new dated snapshot under
+   with SOURCE.json hashes. It refuses to overwrite an existing snapshot.
+-  regenerates ,  and
+   from the latest verified snapshot. Output is deterministic.
+
+Full refresh and certification workflow: Phase 19.
 
 ## Status
-Phase 1 complete: placeholder page deployed via GitHub Actions.
+Phases 1-3 complete: deploy, metrics library, Texas geometry and unit registry.
 
 Live site: https://antimatterhut.github.io/electionShifter/

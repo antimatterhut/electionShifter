@@ -1,0 +1,19 @@
+{
+  "source_id": "census-cb",
+  "snapshot": "2026-11-09",
+  "retrieved_at": "2026-11-09T11:06:46.302Z",
+  "method": "scripted",
+  "urls": [
+    "https://www2.census.gov/geo/tiger/GENZ2025/shp/cb_2025_us_county_5m.zip"
+  ],
+  "upstream_commit": null,
+  "license": "Public domain (U.S. Census Bureau work); not confirmed in writing",
+  "files": [
+    {
+      "path": "cb_2025_us_county_5m.zip",
+      "sha256": "faec522080681e79be5be435c981009a77891206ff8a7f1d142f3bf5da9ebd74",
+      "bytes": 2983552
+    }
+  ],
+  "notes": "Cartographic boundary county file, 1:5,000,000, vintage 2025."
+}
