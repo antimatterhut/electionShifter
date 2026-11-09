@@ -43,3 +43,11 @@ h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
 #picker { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: .75rem 0; }
 #picker .pick { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .6rem; background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: .4rem .75rem; }
 #picker legend { font-weight: 700; padding: 0 .25rem; }
+
+#group { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid #ccc; border-radius: 4px; }
+#group h2 { margin: 0 0 .5rem; font-size: 1.1rem; }
+#group ul { padding-left: 1.2rem; }
+#group .group-votes td, #group .group-votes th { padding: .15rem .6rem; text-align: right; }
+#group .group-votes th[scope="row"] { text-align: left; }
+#group .hint, #group .sub { color: #555; font-size: .9rem; }
+path[data-selected] { cursor: pointer; }

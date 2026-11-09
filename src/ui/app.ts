@@ -12,6 +12,7 @@ import {
   type ViewSpec,
 } from '../domain/view.ts';
 import { renderControls } from './controls.ts';
+import { mountGroupPanel, type GroupPanel } from './groups.ts';
 import { loadManifest, loadRace, loadTopology, loadUnits } from './data.ts';
 import { METRICS } from './explain.ts';
 import { renderLegend } from './legend.ts';
@@ -74,6 +75,7 @@ async function render(root: HTMLElement): Promise<void> {
     <p id="not-comparable" class="notice" role="status" hidden></p>
     <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
     <div id="legend-wrap"></div>
+    <section id="group" aria-label="County group"></section>
     <details id="table-wrap"><summary>Data table</summary><div id="table"></div></details>
     <footer id="source"></footer>`;
   const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
@@ -105,6 +107,36 @@ async function render(root: HTMLElement): Promise<void> {
     }),
   );
   const updateTable = renderTable($('#table'));
+
+  const groupCtx = () => ({
+    spec,
+    raceA: pair.raceA,
+    raceB: pair.raceB,
+    labelA: pair.labelA,
+    labelB: pair.labelB,
+    unitName,
+  });
+  let group!: GroupPanel;
+  const highlight = (ids: string[]) => {
+    const on = new Set(ids);
+    for (const p of svg.querySelectorAll<SVGPathElement>('path[data-unit]')) {
+      const sel = on.has(p.dataset.unit!);
+      p.toggleAttribute('data-selected', sel);
+      p.setAttribute('stroke', sel ? '#000' : '#fff');
+      p.setAttribute('stroke-width', sel ? '2' : '0.5');
+    }
+  };
+  svg.addEventListener('click', (e) => {
+    const p = (e.target as Element).closest?.('path[data-unit]') as SVGPathElement | null;
+    if (p) group.toggle(p.dataset.unit!);
+  });
+  svg.addEventListener('keydown', (e) => {
+    const p = (e.target as Element).closest?.('path[data-unit]') as SVGPathElement | null;
+    if (p && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      group.toggle(p.dataset.unit!);
+    }
+  });
 
   let token = 0;
   async function showPair(ids: RacePair): Promise<void> {
@@ -150,6 +182,7 @@ async function render(root: HTMLElement): Promise<void> {
       spec = next;
       update();
     });
+    if (group === undefined) group = mountGroupPanel($('#group'), groupCtx(), highlight);
     update();
   }
 
@@ -196,6 +229,8 @@ async function render(root: HTMLElement): Promise<void> {
       }),
       info.label,
     );
+
+    group.refresh(groupCtx());
 
     const notice = $('#notice');
     const showNotice = noticeText !== null;
