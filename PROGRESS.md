@@ -35,7 +35,7 @@ Start Phase 3 (Texas geometry and unit registry) in a new session using KICKOFF_
 - Mocked or stubbed: none. Tests use in-memory fixtures built from the §4 worked example.
 - Design notes: metrics take summed `Totals` (aggregate first, then metric) and return `{value, reason}`; reason codes are in `types.ts`. `decomposeShift` rounds the margin part to a whole vote and gives the turnout part as the remainder, so the two integers sum exactly to raw shift (turnout part may differ from the unrounded formula by under 0.5 vote).
 - Uncertain: percent metrics are returned in points (x100). A unit counts as missing if its total or any D/R-side candidate vote is null.
-- Deploy result: see below.
+- Deploy result: Actions run for aed5fa2 concluded success; live URL returns 200.
 
 ## Waiting on the owner
 - Download MEDSL county presidential file (Phase 12).
