@@ -48,3 +48,24 @@ test('invalid params do not crash and show a notice', async ({ page }) => {
   await expect(page.locator('#map path[data-unit]').first()).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('legend names who is green and purple, and totals compare two candidates', async ({ page }) => {
+  await page.goto('./');
+  await expect(page.locator('#tot-a')).toBeVisible();
+  const pick = async (sel: string, re: RegExp) => {
+    const v = await page.locator(`${sel} option`).evaluateAll((os, src) => {
+      const r = new RegExp(src, 'i');
+      return (os as HTMLOptionElement[]).find((o) => r.test(o.textContent ?? ''))?.value ?? null;
+    }, re.source);
+    expect(v).not.toBeNull();
+    return v!;
+  };
+  await page.selectOption('#tot-a', await pick('#tot-a', /trump/));
+  await page.selectOption('#tot-b', await pick('#tot-b', /tal[ae]rico/));
+  await page.selectOption('#metric', 'candidate_change_pct');
+  await expect(page.locator('#legend .who')).toContainText(/Green counties: .*Tal.*did better than .*Trump/);
+  await expect(page.locator('#legend .who')).toContainText(/Purple counties/);
+  await expect(page.locator('#totals-verdict')).toContainText(/more votes: [\d,]+ to [\d,]+/);
+  await expect(page.locator('#totals .totals-table')).toHaveCount(2);
+  await expect(page.locator('#cand-a')).toHaveValue(await page.locator('#tot-a').inputValue());
+});

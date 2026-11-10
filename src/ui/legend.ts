@@ -2,7 +2,7 @@ import { fmtCount } from '../domain/format.ts';
 import { binsForScale, gradientLegend, type ScaleSpec } from '../domain/scales.ts';
 import { BASIS_NOTE, METRICS } from './explain.ts';
 import type { Basis, MetricId } from '../domain/types.ts';
-import { BASIS_METRICS } from '../domain/view.ts';
+import { BASIS_METRICS, CANDIDATE_METRICS } from '../domain/view.ts';
 
 const UNIT_TITLE: Record<ScaleSpec['unit'], string> = {
   pts: 'percentage points',
@@ -16,12 +16,17 @@ function edgeFormatter(unit: ScaleSpec['unit']): (n: number) => string {
   return (n) => String(n);
 }
 
+function esc(s: string): string {
+  return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+}
+
 export function renderLegend(
   metric: MetricId,
   spec: ScaleSpec,
   basis: Basis,
   labelA: string,
   labelB: string,
+  cands?: { a: string; b: string },
 ): HTMLElement {
   const el = document.createElement('section');
   el.id = 'legend';
@@ -51,9 +56,20 @@ export function renderLegend(
   if (BASIS_METRICS.has(metric)) notes.push(BASIS_NOTE[basis]);
   if (spec.unit === 'votes') notes.push('Raw-vote colors blend smoothly on a log-style scale (each tick is 10 times the last) that ends at the largest value in this view, so they change with the metric.');
   else notes.push('Bins are fixed so maps stay comparable.');
+  let neg = info.direction.neg;
+  let pos = info.direction.pos;
+  let who = '';
+  if (cands && CANDIDATE_METRICS.has(metric)) {
+    const from = `${cands.a} (${labelA})`;
+    const to = `${cands.b} (${labelB})`;
+    neg = `◀ ${to} got fewer votes than ${from} (purple)`;
+    pos = `${to} got more votes than ${from} (green) ▶`;
+    who = `<p class="who">Green counties: ${esc(cands.b)} did better than ${esc(cands.a)}. Purple counties: ${esc(cands.b)} did worse than ${esc(cands.a)}.</p>`;
+  }
   el.innerHTML = `
     <h2>${info.label} (${UNIT_TITLE[spec.unit]})</h2>
-    <p class="dir"><span class="${cls[0]}">${info.direction.neg}</span> · <span class="${cls[1]}">${info.direction.pos}</span></p>
+    <p class="dir"><span class="${cls[0]}">${esc(neg)}</span> · <span class="${cls[1]}">${esc(pos)}</span></p>
+    ${who}
     ${scaleHtml}
     <p class="note">${info.define(labelA, labelB)} ${notes.join(' ')}</p>`;
   return el;

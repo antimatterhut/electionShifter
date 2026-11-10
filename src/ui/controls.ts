@@ -92,7 +92,10 @@ export function renderControls(
   );
 
   return (s: ViewSpec) => {
+    current = s;
     q<HTMLSelectElement>('#metric').value = s.metric;
+    q<HTMLSelectElement>('#cand-a').value = s.candA ?? defaultCandidate(raceA) ?? '';
+    q<HTMLSelectElement>('#cand-b').value = s.candB ?? defaultCandidate(raceB) ?? '';
     q<HTMLElement>('#definition').textContent = METRICS[s.metric].define(labels.a, labels.b);
     q<HTMLElement>('#basis-group').hidden = !BASIS_METRICS.has(s.metric);
     q<HTMLElement>('#which-group').hidden = !SINGLE_RACE_METRICS.has(s.metric);

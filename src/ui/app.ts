@@ -1,9 +1,10 @@
 import { aggregateUnits, commonUnits } from '../domain/aggregate.ts';
-import { fmtMetric } from '../domain/format.ts';
+import { fmtMetric, titleCase } from '../domain/format.ts';
 import { raceLabel } from '../domain/races.ts';
 import { colorForScale } from '../domain/scales.ts';
 import type { RaceFile, RaceMeta } from '../domain/types.ts';
 import {
+  defaultCandidate,
   metricValue,
   notComparable,
   scaleFor,
@@ -20,6 +21,7 @@ import { renderLegend } from './legend.ts';
 import { paintMap, renderMap } from './map.ts';
 import { renderRacePicker, type RacePair } from './racepicker.ts';
 import { mountShare } from './share.ts';
+import { renderTotals } from './totals.ts';
 import { renderTable } from './table.ts';
 import { attachTooltip, nameLookup, tooltipHtml } from './tooltip.ts';
 
@@ -33,6 +35,11 @@ function find(races: RaceMeta[], id: string): RaceMeta {
   const m = races.find((r) => r.race_id === id);
   if (!m) throw new Error(`Race not in manifest: ${id}`);
   return m;
+}
+
+function candShort(race: RaceFile, id: string | null): string {
+  const c = race.candidates.find((x) => x.candidate_id === (id ?? defaultCandidate(race)));
+  return c ? titleCase(c.name) : 'the candidate';
 }
 
 function esc(s: string): string {
@@ -79,6 +86,7 @@ async function render(root: HTMLElement): Promise<void> {
     <p id="not-comparable" class="notice" role="status" hidden></p>
     <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
     <div id="legend-wrap"></div>
+    <section id="totals" aria-label="Total votes"></section>
     <section id="group" aria-label="County group"></section>
     <details id="table-wrap"><summary>Data table</summary><div id="table"></div></details>
     <footer id="source"></footer>`;
@@ -272,8 +280,25 @@ async function render(root: HTMLElement): Promise<void> {
     });
 
     $('#legend-wrap').replaceChildren(
-      blocked === null ? renderLegend(spec.metric, scale, spec.basis, labelA, labelB) : document.createElement('div'),
+      blocked === null
+        ? renderLegend(spec.metric, scale, spec.basis, labelA, labelB, {
+            a: candShort(raceA, spec.candA),
+            b: candShort(raceB, spec.candB),
+          })
+        : document.createElement('div'),
     );
+
+    const focused = document.activeElement?.id;
+    renderTotals(
+      $('#totals'),
+      { raceA, raceB, labelA, labelB, unitIds, candA: spec.candA, candB: spec.candB, stateName: STATE_NAME },
+      (side, id) => {
+        spec = side === 'A' ? { ...spec, candA: id } : { ...spec, candB: id };
+        update();
+        root.querySelector<HTMLElement>(side === 'A' ? '#tot-a' : '#tot-b')?.focus();
+      },
+    );
+    if (focused === 'tot-a' || focused === 'tot-b') root.querySelector<HTMLElement>('#' + focused)?.focus();
 
     updateTable(
       unitIds.map((id) => {

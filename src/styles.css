@@ -61,3 +61,12 @@ path[data-selected] { cursor: pointer; }
 
 #share { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 #share input { flex: 1; min-width: 12rem; }
+
+.totals-grid { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.totals-table { border-collapse: collapse; min-width: 18rem; }
+.totals-table caption { text-align: left; font-weight: 600; padding-bottom: 0.25rem; }
+.totals-table th, .totals-table td { padding: 0.2rem 0.6rem; text-align: right; }
+.totals-table th[scope="row"], .totals-table th[scope="col"]:first-child { text-align: left; }
+.totals-table tr.chosen { background: #f1eefa; font-weight: 600; }
+.totals-table tr.all { border-top: 1px solid #999; }
+.legend .who, #legend .who { margin: 0.25rem 0; }
