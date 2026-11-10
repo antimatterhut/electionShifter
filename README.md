@@ -25,6 +25,9 @@ rebuild), unit tests, the production build, and the Playwright e2e test (`playwr
 Push to `main`. GitHub Actions runs the tests and publishes `dist/` to GitHub Pages
 (Settings → Pages → Source must be "GitHub Actions").
 
+## Shareable links
+The address bar tracks the view with `history.replaceState`. Params: `v=1, a, b` (race ids), `metric`, `basis`, `which` (A/B, for single-race metrics), `state`, `ca`, `cb` (candidate ids), `g` (comma-separated county ids), `gname`, `mode`. Invalid values fall back to defaults and show a notice. "Copy link" always produces a `https://antimatterhut.github.io/electionShifter/?...` URL.
+
 ## Data refresh
 Geometry (Phase 3):
 - `npm run data:fetch:census` downloads the Census county file into a new dated snapshot under

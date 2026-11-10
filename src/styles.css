@@ -58,3 +58,6 @@ path[data-selected] { cursor: pointer; }
 #legend .gradient .tick { position: absolute; transform: translateX(-50%); font-size: .75rem; white-space: nowrap; }
 #legend .gradient .tick:first-child { transform: none; }
 #legend .gradient .tick:last-child { transform: translateX(-100%); }
+
+#share { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+#share input { flex: 1; min-width: 12rem; }

@@ -11,6 +11,7 @@ import {
   unitDetail,
   type ViewSpec,
 } from '../domain/view.ts';
+import { parseUrlState, type UrlState } from '../domain/urlState.ts';
 import { renderControls } from './controls.ts';
 import { mountGroupPanel, type GroupPanel } from './groups.ts';
 import { loadManifest, loadRace, loadTopology, loadUnits } from './data.ts';
@@ -18,6 +19,7 @@ import { METRICS } from './explain.ts';
 import { renderLegend } from './legend.ts';
 import { paintMap, renderMap } from './map.ts';
 import { renderRacePicker, type RacePair } from './racepicker.ts';
+import { mountShare } from './share.ts';
 import { renderTable } from './table.ts';
 import { attachTooltip, nameLookup, tooltipHtml } from './tooltip.ts';
 
@@ -71,6 +73,8 @@ async function render(root: HTMLElement): Promise<void> {
     </header>
     <section id="picker" aria-label="Choose two races"></section>
     <section id="controls" aria-label="Controls"></section>
+    <section id="share" aria-label="Share this view"></section>
+    <aside id="url-notice" class="notice" role="status" hidden></aside>
     <aside id="notice" class="notice" role="note" hidden></aside>
     <p id="not-comparable" class="notice" role="status" hidden></p>
     <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
@@ -91,8 +95,47 @@ async function render(root: HTMLElement): Promise<void> {
     return p;
   };
 
+  const parsed = parseUrlState(window.location.search, {
+    races: races.map((r) => r.race_id),
+    units: unitIds,
+    states: [STATE],
+    defaults: { a: DEFAULT_A, b: DEFAULT_B, state: STATE },
+  });
+  const urlNotices = [...parsed.notices];
+  const initial = parsed.state;
+  const share = mountShare($('#share'));
+  const showUrlNotices = () => {
+    const el = $('#url-notice');
+    el.hidden = urlNotices.length === 0;
+    el.textContent = urlNotices.join(' ');
+  };
+  const writeUrl = () => {
+    if (pair === undefined || group === undefined) return;
+    const s: UrlState = {
+      a: pair.metaA.race_id,
+      b: pair.metaB.race_id,
+      metric: spec.metric,
+      basis: spec.basis,
+      which: spec.which,
+      state: STATE,
+      candA: spec.candA,
+      candB: spec.candB,
+      group: group.ids(),
+      groupName: group.name(),
+      mode: initial.mode,
+    };
+    share.set(s);
+  };
+
   let pair!: Pair;
-  let spec: ViewSpec = { metric: 'margin_swing', basis: 'total', which: 'B', candA: null, candB: null };
+  let spec: ViewSpec = {
+    metric: initial.metric,
+    basis: initial.basis,
+    which: initial.which,
+    candA: initial.candA,
+    candB: initial.candB,
+  };
+  let firstLoad = true;
   let noticeText: string | null = null;
   let syncControls: (s: ViewSpec) => void = () => {};
 
@@ -118,6 +161,7 @@ async function render(root: HTMLElement): Promise<void> {
   });
   let group!: GroupPanel;
   const highlight = (ids: string[]) => {
+    writeUrl();
     const on = new Set(ids);
     for (const p of svg.querySelectorAll<SVGPathElement>('path[data-unit]')) {
       const sel = on.has(p.dataset.unit!);
@@ -177,12 +221,26 @@ async function render(root: HTMLElement): Promise<void> {
       aggregateUnits(raceB, common).totals?.t ?? 0,
     );
 
-    spec = { ...spec, candA: null, candB: null };
+    if (firstLoad) {
+      // Candidates from the link must exist in their race; otherwise fall back to the default.
+      const has = (r: RaceFile, c: string | null) => c === null || r.candidates.some((x) => x.candidate_id === c);
+      if (!has(raceA, spec.candA) || !has(raceB, spec.candB)) {
+        urlNotices.push('Ignored a candidate in the link that is not in these races.');
+        spec = { ...spec, candA: has(raceA, spec.candA) ? spec.candA : null, candB: has(raceB, spec.candB) ? spec.candB : null };
+      }
+    } else {
+      spec = { ...spec, candA: null, candB: null };
+    }
     syncControls = renderControls($('#controls'), spec, raceA, raceB, { a: labelA, b: labelB }, (next) => {
       spec = next;
       update();
     });
-    if (group === undefined) group = mountGroupPanel($('#group'), groupCtx(), highlight);
+    if (group === undefined) {
+      group = mountGroupPanel($('#group'), groupCtx(), highlight, { ids: initial.group, name: initial.groupName });
+      highlight(group.ids());
+    }
+    firstLoad = false;
+    showUrlNotices();
     update();
   }
 
@@ -231,6 +289,7 @@ async function render(root: HTMLElement): Promise<void> {
     );
 
     group.refresh(groupCtx());
+    writeUrl();
 
     const notice = $('#notice');
     const showNotice = noticeText !== null;
@@ -247,7 +306,7 @@ async function render(root: HTMLElement): Promise<void> {
     }
   }
 
-  let ids: RacePair = { a: find(races, DEFAULT_A).race_id, b: find(races, DEFAULT_B).race_id };
+  let ids: RacePair = { a: initial.a, b: initial.b };
   renderRacePicker($('#picker'), races, ids, (next) => {
     ids = next;
     showPair(ids).catch((e) => {

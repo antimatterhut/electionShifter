@@ -122,6 +122,7 @@ export interface GroupPanel {
   toggle(id: string): void;
   has(id: string): boolean;
   ids(): string[];
+  name(): string;
   /** Re-render after the metric or race pair changed. */
   refresh(ctx: GroupContext): void;
 }
@@ -130,10 +131,15 @@ export interface GroupPanel {
  * Mounts the group panel into `host`. `onChange` runs after the selection changes, so the
  * caller can repaint the map highlight.
  */
-export function mountGroupPanel(host: HTMLElement, initial: GroupContext, onChange: (ids: string[]) => void): GroupPanel {
-  const selected: string[] = [];
+export function mountGroupPanel(
+  host: HTMLElement,
+  initial: GroupContext,
+  onChange: (ids: string[]) => void,
+  restore?: { ids: string[]; name: string },
+): GroupPanel {
+  const selected: string[] = restore ? [...restore.ids] : [];
   let ctx = initial;
-  let name = '';
+  let name = restore && restore.ids.length > 0 ? restore.name : '';
 
   const render = () => {
     const keepFocus = host.contains(document.activeElement) && (document.activeElement as HTMLElement).id === 'group-name';
@@ -200,6 +206,7 @@ export function mountGroupPanel(host: HTMLElement, initial: GroupContext, onChan
       name = t.value;
       const h = host.querySelector('h2');
       if (h) h.textContent = name || 'County group';
+      onChange([...selected]);
     }
   });
 
@@ -214,6 +221,7 @@ export function mountGroupPanel(host: HTMLElement, initial: GroupContext, onChan
     },
     has: (id) => selected.includes(id),
     ids: () => [...selected],
+    name: () => name,
     refresh(next) {
       ctx = next;
       render();

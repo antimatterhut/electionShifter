@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-09 by Phase 8 session
+Last updated: 2026-11-09 by Phase 9 session
 
 ## Phase checklist
 Legend: [ ] todo, [~] in progress, [x] done
@@ -13,7 +13,7 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [x] 6. All metrics and explanation
 - [x] 7. All Texas statewide races and race picker
 - [x] 8. County groups
-- [ ] 9. Shareable URLs
+- [x] 9. Shareable URLs
 - [ ] 10. PNG export
 - [ ] 11. 2026 full-county states
 - [ ] 12. 2024 President and Senate everywhere
@@ -27,9 +27,15 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [ ] 20. v1 audit
 
 ## Next steps
-Start Phase 9 (Shareable URLs) in a new session using KICKOFF_PROMPTS.md.
+Start Phase 10 (PNG export) in a new session using KICKOFF_PROMPTS.md.
 
 ## Last session summary
+- Phase 9 done: `src/domain/urlState.ts` (pure parse/serialize/shareUrl), `src/ui/share.ts` (Copy link button + readonly link box, replaceState), wired in `app.ts`; group panel takes restored ids/name and reports name edits. Tests: 148 vitest (5 new: round-trip over all metrics x basis x which, defaults, invalid values, garbage, live-site link) and 33 Playwright (3 new in `share.spec.ts`: full URL restores view and group and reopens in a new browser context from the copied link, replaceState adds no history entries, invalid params show a notice without page errors) via full `npm test`.
+- Judgment calls: added a `which` param (not in the §Phase 9 list) so margin / raw margin restore exactly. `mode` is parsed, validated and carried through but unused until Phase 18. Candidate ids are checked against the race files after load. The URL is rewritten on every view or group change.
+- Uncertain: the Copy button's clipboard write is not covered by a test (headless permissions); the link box content is. "New context" was tested with a fresh Playwright context against the local preview, not the deployed site.
+- Deploy result (Phase 9): see below.
+
+### Previous session (Phase 8)
 - Done: Phase 8. `src/ui/groups.ts`: pure `summarizeGroup` (sums votes over counties usable in both races via `commonUnits`/`aggregateUnits`, then applies the metric functions) and `disclosure`, plus the panel (list with Remove, optional name, Clear, chosen metric, margin swing, raw shift, turnout %, D/R/total per race). Click or Enter/Space on a county toggles it; selected counties get a black outline (`data-selected`). Missing counties are listed and disclosed as "N of M counties have data in both races"; a margin metric on a pair with no D-R contest shows the not-comparable message in the panel. The panel follows metric, basis, candidate and race-pair changes. The selection persists when the race pair changes.
 - Tests: 141 vitest (4 new in `tests/unit/groups.test.ts`: Collin + Denton +22.43 / +205,151 / âˆ’11.69%, equality with `aggregateUnits` + metrics, partial-missing disclosure, all-missing) and 30 Playwright e2e (3 new in `tests/e2e/groups.spec.ts`) pass via full `npm test`.
 - Not done: nothing in Phase 8 scope. Group is not in the URL (Phase 9).
