@@ -2,7 +2,7 @@ import type { Basis, MetricId, RaceFile } from '../domain/types.ts';
 import { titleCase } from '../domain/format.ts';
 import {
   BASIS_METRICS,
-  CANDIDATE_METRICS,
+  CANDIDATE_PICK_METRICS,
   METRIC_IDS,
   SINGLE_RACE_METRICS,
   defaultCandidate,
@@ -99,6 +99,6 @@ export function renderControls(
     q<HTMLElement>('#definition').textContent = METRICS[s.metric].define(labels.a, labels.b);
     q<HTMLElement>('#basis-group').hidden = !BASIS_METRICS.has(s.metric);
     q<HTMLElement>('#which-group').hidden = !SINGLE_RACE_METRICS.has(s.metric);
-    q<HTMLElement>('#cand-group').hidden = !CANDIDATE_METRICS.has(s.metric);
+    q<HTMLElement>('#cand-group').hidden = !CANDIDATE_PICK_METRICS.has(s.metric);
   };
 }

@@ -4,6 +4,7 @@ import { fmtCount, fmtMetric, fmtPct, fmtPts, fmtVotes } from '../domain/format.
 import {
   candidateChange,
   decomposeShift,
+  headToHead,
   margin,
   marginSwing,
   rawMargin,
@@ -11,7 +12,7 @@ import {
   turnoutChange,
 } from '../domain/metrics.ts';
 import type { MetricId, MetricResult, RaceFile, Totals } from '../domain/types.ts';
-import { defaultCandidate, notComparable, type ViewSpec } from '../domain/view.ts';
+import { defaultCandidate, headToHeadSides, notComparable, type ViewSpec } from '../domain/view.ts';
 import { METRICS } from './explain.ts';
 
 export interface GroupSummary {
@@ -77,6 +78,17 @@ export function summarizeGroup(spec: ViewSpec, a: RaceFile, b: RaceFile, unitIds
     case 'candidate_change_pct':
       current = cand.pct;
       break;
+    case 'head_to_head': {
+      const sides = headToHeadSides(a, b, spec);
+      current =
+        sides === null
+          ? { value: null, reason: 'no_dr_contest' }
+          : headToHead(
+              aggregateCandidate(sides.d.race, sides.d.id, used).votes,
+              aggregateCandidate(sides.r.race, sides.r.id, used).votes,
+            );
+      break;
+    }
     case 'turnout_change_raw':
       current = t.raw;
       break;

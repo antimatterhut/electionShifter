@@ -5,6 +5,7 @@ import { colorForScale } from '../domain/scales.ts';
 import type { RaceFile, RaceMeta } from '../domain/types.ts';
 import {
   defaultCandidate,
+  headToHeadSides,
   metricValue,
   notComparable,
   scaleFor,
@@ -84,8 +85,7 @@ async function render(root: HTMLElement): Promise<void> {
     <aside id="url-notice" class="notice" role="status" hidden></aside>
     <aside id="notice" class="notice" role="note" hidden></aside>
     <p id="not-comparable" class="notice" role="status" hidden></p>
-    <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
-    <div id="legend-wrap"></div>
+    <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div><div id="legend-wrap"></div></div>
     <section id="totals" aria-label="Total votes"></section>
     <section id="group" aria-label="County group"></section>
     <details id="table-wrap"><summary>Data table</summary><div id="table"></div></details>
@@ -252,6 +252,12 @@ async function render(root: HTMLElement): Promise<void> {
     update();
   }
 
+  function h2hNames(): { d?: string; r?: string } {
+    const s = headToHeadSides(pair.raceA, pair.raceB, spec);
+    if (s === null) return {};
+    return { d: candShort(s.d.race, s.d.id), r: candShort(s.r.race, s.r.id) };
+  }
+
   function update(): void {
     const { raceA, raceB, labelA, labelB } = pair;
     syncControls(spec);
@@ -284,6 +290,7 @@ async function render(root: HTMLElement): Promise<void> {
         ? renderLegend(spec.metric, scale, spec.basis, labelA, labelB, {
             a: candShort(raceA, spec.candA),
             b: candShort(raceB, spec.candB),
+            ...h2hNames(),
           })
         : document.createElement('div'),
     );

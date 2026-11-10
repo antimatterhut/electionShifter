@@ -41,6 +41,7 @@ export function fmtMetric(metric: MetricId, v: number): string {
   switch (metric) {
     case 'margin':
     case 'margin_swing':
+    case 'head_to_head':
       return fmtPts(v);
     case 'candidate_change_pct':
     case 'turnout_change_pct':

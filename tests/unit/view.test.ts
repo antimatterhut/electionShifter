@@ -49,7 +49,7 @@ describe('metricValue (MASTER_PLAN §4, Collin)', () => {
   const v = (m: ViewSpec['metric'], over: Partial<ViewSpec> = {}) =>
     metricValue(spec({ metric: m, ...over }), raceA, raceB, COLLIN).value!;
   it('computes every selectable metric', () => {
-    expect(METRIC_IDS).toHaveLength(10);
+    expect(METRIC_IDS).toHaveLength(11);
     expect(v('margin_swing')).toBeCloseTo(23.18, 2);
     expect(v('margin_swing', { basis: 'two_party' })).toBeCloseTo(23.75, 2);
     expect(v('raw_shift')).toBe(112726);

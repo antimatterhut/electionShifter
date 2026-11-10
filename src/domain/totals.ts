@@ -1,6 +1,7 @@
 // Statewide candidate vote totals for a pair of races. Pure; no DOM.
 import { aggregateCandidate, aggregateUnits, commonUnits } from './aggregate.ts';
 import type { RaceFile } from './types.ts';
+import { headToHeadSides, type ViewSpec } from './view.ts';
 
 export interface CandidateRow {
   candidateId: string;
@@ -50,4 +51,60 @@ export function pairTotals(a: RaceFile, b: RaceFile, unitIds: readonly string[])
 /** Votes for the chosen candidate in a race's totals, or null. */
 export function votesFor(t: RaceTotals, candidateId: string | null): number | null {
   return t.rows.find((r) => r.candidateId === candidateId)?.votes ?? null;
+}
+
+export interface HeadToHeadSummary {
+  /** Which race the D-side candidate comes from. */
+  dFrom: 'A' | 'B';
+  d: { candidateId: string; votes: number; counties: number; share: number };
+  r: { candidateId: string; votes: number; counties: number; share: number };
+  /** D − R in points of the two candidates' combined votes. */
+  margin: number;
+  /** D votes − R votes. */
+  rawMargin: number;
+  ties: number;
+  used: number;
+  requested: number;
+}
+
+/**
+ * Hypothetical race between the chosen D-side and R-side candidates, using each one's actual votes
+ * over the counties usable in both races. Shares are of the two candidates' combined votes.
+ */
+export function headToHeadSummary(
+  a: RaceFile,
+  b: RaceFile,
+  spec: Pick<ViewSpec, 'candA' | 'candB'>,
+  unitIds: readonly string[],
+): HeadToHeadSummary | null {
+  const sides = headToHeadSides(a, b, spec);
+  if (sides === null) return null;
+  const used = commonUnits(a, b, unitIds);
+  let dTotal = 0;
+  let rTotal = 0;
+  let dWon = 0;
+  let rWon = 0;
+  let ties = 0;
+  for (const u of used) {
+    const dv = aggregateCandidate(sides.d.race, sides.d.id, [u]).votes;
+    const rv = aggregateCandidate(sides.r.race, sides.r.id, [u]).votes;
+    if (dv === null || rv === null) continue;
+    dTotal += dv;
+    rTotal += rv;
+    if (dv > rv) dWon++;
+    else if (rv > dv) rWon++;
+    else ties++;
+  }
+  const den = dTotal + rTotal;
+  if (!(den > 0)) return null;
+  return {
+    dFrom: sides.d.race === a ? 'A' : 'B',
+    d: { candidateId: sides.d.id, votes: dTotal, counties: dWon, share: (dTotal / den) * 100 },
+    r: { candidateId: sides.r.id, votes: rTotal, counties: rWon, share: (rTotal / den) * 100 },
+    margin: ((dTotal - rTotal) / den) * 100,
+    rawMargin: dTotal - rTotal,
+    ties,
+    used: used.length,
+    requested: unitIds.length,
+  };
 }

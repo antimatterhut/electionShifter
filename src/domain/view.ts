@@ -8,6 +8,7 @@ import {
   rawMargin,
   rawShift,
   turnoutChange,
+  headToHead,
 } from './metrics.ts';
 import {
   CANDIDATE_PCT_EDGES,
@@ -41,6 +42,7 @@ export const METRIC_IDS: MetricId[] = [
   'candidate_change_raw',
   'turnout_change_pct',
   'turnout_change_raw',
+  'head_to_head',
 ];
 
 /** Metrics whose value depends on the D/R basis. */
@@ -55,6 +57,32 @@ export const CANDIDATE_METRICS: ReadonlySet<MetricId> = new Set([
   'candidate_change_raw',
   'candidate_change_pct',
 ]);
+
+/** Metrics that read the two chosen candidates (selectors shown). */
+export const CANDIDATE_PICK_METRICS: ReadonlySet<MetricId> = new Set([
+  'candidate_change_raw',
+  'candidate_change_pct',
+  'head_to_head',
+]);
+
+/**
+ * The chosen candidate from each race, split into the D-side and R-side one. Null unless exactly
+ * one of them is D-side and the other R-side.
+ */
+export function headToHeadSides(
+  a: RaceFile,
+  b: RaceFile,
+  spec: Pick<ViewSpec, 'candA' | 'candB'>,
+): { d: { race: RaceFile; id: string }; r: { race: RaceFile; id: string } } | null {
+  const ia = pick(a, spec.candA);
+  const ib = pick(b, spec.candB);
+  if (ia === null || ib === null) return null;
+  const sa = sideOf(a.candidates.find((c) => c.candidate_id === ia)!);
+  const sb = sideOf(b.candidates.find((c) => c.candidate_id === ib)!);
+  if (sa === 'D' && sb === 'R') return { d: { race: a, id: ia }, r: { race: b, id: ib } };
+  if (sa === 'R' && sb === 'D') return { d: { race: b, id: ib }, r: { race: a, id: ia } };
+  return null;
+}
 
 /** D-side candidate if the race has one, else the first candidate, else null. */
 export function defaultCandidate(race: RaceFile): string | null {
@@ -101,6 +129,11 @@ export function metricValue(
       );
       return spec.metric === 'candidate_change_raw' ? c.raw : c.pct;
     }
+    case 'head_to_head': {
+      const s = headToHeadSides(a, b, spec);
+      if (s === null) return { value: null, reason: 'no_dr_contest' };
+      return headToHead(candVotes(s.d.race, s.d.id, unitId), candVotes(s.r.race, s.r.id, unitId));
+    }
     case 'turnout_change_raw':
       return turnoutChange(ta, tb).raw;
     case 'turnout_change_pct':
@@ -114,6 +147,7 @@ export function scaleFor(metric: MetricId, values: readonly number[]): ScaleSpec
   switch (metric) {
     case 'margin':
     case 'margin_swing':
+    case 'head_to_head':
       return { edges: MARGIN_EDGES, palette: 'partisan', unit: 'pts' };
     case 'raw_margin':
     case 'raw_shift':
@@ -230,6 +264,11 @@ export function notComparable(
   labelA: string,
   labelB: string,
 ): string | null {
+  if (spec.metric === 'head_to_head') {
+    return headToHeadSides(a, b, spec) === null
+      ? 'Not comparable: pick one Democratic and one Republican candidate'
+      : null;
+  }
   if (CANDIDATE_METRICS.has(spec.metric) || spec.metric === 'turnout_change_pct' || spec.metric === 'turnout_change_raw') {
     return null;
   }

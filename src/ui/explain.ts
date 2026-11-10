@@ -78,6 +78,14 @@ export const METRICS: Record<MetricId, MetricInfo> = {
     colors: 'Green = more votes. Purple = fewer votes.',
     direction: CHANGE,
   },
+  head_to_head: {
+    label: 'Hypothetical head-to-head',
+    short: 'head-to-head',
+    define: (a, b) =>
+      `Imagines the chosen candidate from ${a} running against the chosen candidate from ${b}, using the votes each actually got in every county. The margin is the lead as points of the two candidates' combined votes.`,
+    colors: 'Blue = the Democratic-side candidate leads. Red = the Republican-side candidate leads.',
+    direction: LEAD,
+  },
   turnout_change_pct: {
     label: 'Turnout change, %',
     short: 'turnout change',

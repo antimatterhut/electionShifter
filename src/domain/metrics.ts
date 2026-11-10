@@ -28,6 +28,17 @@ export function margin(t: Totals | null, basis: Basis = 'total'): MetricResult {
   return ok(((t.d - t.r) / den) * 100);
 }
 
+/**
+ * Hypothetical head-to-head between a Democratic-side candidate and a Republican-side candidate,
+ * as points of their combined votes: (D − R) / (D + R). Positive = the D-side candidate leads.
+ */
+export function headToHead(dVotes: number | null, rVotes: number | null): MetricResult {
+  if (dVotes === null || rVotes === null) return fail('missing_unit');
+  const den = dVotes + rVotes;
+  if (!(den > 0)) return fail('missing_total');
+  return ok(((dVotes - rVotes) / den) * 100);
+}
+
 /** margin_B − margin_A in points. */
 export function marginSwing(a: Totals | null, b: Totals | null, basis: Basis = 'total'): MetricResult {
   const ma = margin(a, basis);

@@ -26,7 +26,7 @@ export function renderLegend(
   basis: Basis,
   labelA: string,
   labelB: string,
-  cands?: { a: string; b: string },
+  cands?: { a: string; b: string; d?: string; r?: string },
 ): HTMLElement {
   const el = document.createElement('section');
   el.id = 'legend';
@@ -66,11 +66,16 @@ export function renderLegend(
     pos = `${to} got more votes than ${from} (green) ▶`;
     who = `<p class="who">Green counties: ${esc(cands.b)} did better than ${esc(cands.a)}. Purple counties: ${esc(cands.b)} did worse than ${esc(cands.a)}.</p>`;
   }
+  if (metric === 'head_to_head' && cands?.d && cands.r) {
+    neg = `◀ ${cands.r} leads (red)`;
+    pos = `${cands.d} leads (blue) ▶`;
+    who = `<p class="who">Red counties: ${esc(cands.r)} gets more votes. Blue counties: ${esc(cands.d)} gets more votes.</p>`;
+  }
   el.innerHTML = `
     <h2>${info.label} (${UNIT_TITLE[spec.unit]})</h2>
     <p class="dir"><span class="${cls[0]}">${esc(neg)}</span> · <span class="${cls[1]}">${esc(pos)}</span></p>
     ${who}
     ${scaleHtml}
-    <p class="note">${info.define(labelA, labelB)} ${notes.join(' ')}</p>`;
+    <details class="more"><summary>About this scale</summary><p class="note">${info.define(labelA, labelB)} ${notes.join(' ')}</p></details>`;
   return el;
 }

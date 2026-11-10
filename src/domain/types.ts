@@ -15,7 +15,8 @@ export type MetricId =
   | 'turnout_change_raw'
   | 'turnout_change_pct'
   | 'shift_from_margin'
-  | 'shift_from_turnout';
+  | 'shift_from_turnout'
+  | 'head_to_head';
 
 export interface Candidate {
   candidate_id: string;
