@@ -1,4 +1,5 @@
 import { aggregateUnits, commonUnits } from '../domain/aggregate.ts';
+import { headToHeadSummary } from '../domain/totals.ts';
 import { fmtMetric, titleCase } from '../domain/format.ts';
 import { raceLabel } from '../domain/races.ts';
 import { colorForScale } from '../domain/scales.ts';
@@ -24,6 +25,7 @@ import { renderRacePicker, type RacePair } from './racepicker.ts';
 import { mountShare } from './share.ts';
 import { renderTotals } from './totals.ts';
 import { renderTable } from './table.ts';
+import { matchupTooltip, renderMatchup, type MatchupNames } from './matchup.ts';
 import { attachTooltip, nameLookup, tooltipHtml } from './tooltip.ts';
 
 // Default pair when the page opens. Race ids only, never candidate names.
@@ -85,7 +87,10 @@ async function render(root: HTMLElement): Promise<void> {
     <aside id="url-notice" class="notice" role="status" hidden></aside>
     <aside id="notice" class="notice" role="note" hidden></aside>
     <p id="not-comparable" class="notice" role="status" hidden></p>
-    <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div><div id="legend-wrap"></div></div>
+    <div id="map-row">
+      <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div><div id="legend-wrap"></div></div>
+      <aside id="side" aria-label="Matchup" hidden><section id="matchup"></section></aside>
+    </div>
     <section id="totals" aria-label="Total votes"></section>
     <section id="group" aria-label="County group"></section>
     <details id="table-wrap"><summary>Data table</summary><div id="table"></div></details>
@@ -150,7 +155,9 @@ async function render(root: HTMLElement): Promise<void> {
   const svg = renderMap(topo, () => ({ fill: null, label: '' }));
   $('#map-wrap').appendChild(svg);
   attachTooltip(svg, $('#tooltip'), (id) =>
-    tooltipHtml(unitName(id), unitDetail(spec, pair.raceA, pair.raceB, id), {
+    spec.metric === 'head_to_head'
+      ? matchupTooltipFor(id)
+      : tooltipHtml(unitName(id), unitDetail(spec, pair.raceA, pair.raceB, id), {
       a: pair.labelA,
       b: pair.labelB,
       nameA: nameLookup(pair.raceA.candidates),
@@ -252,6 +259,46 @@ async function render(root: HTMLElement): Promise<void> {
     update();
   }
 
+  let shownCounty: string | null = null;
+  function matchupNames(): MatchupNames | null {
+    const s = headToHeadSides(pair.raceA, pair.raceB, spec);
+    if (s === null) return null;
+    const lab = (r: RaceFile) => (r === pair.raceA ? pair.labelA : pair.labelB);
+    const dShort = candShort(s.d.race, s.d.id);
+    const rShort = candShort(s.r.race, s.r.id);
+    return { d: `${dShort} (${lab(s.d.race)})`, r: `${rShort} (${lab(s.r.race)})`, dShort, rShort };
+  }
+  const h2hFor = (ids: string[]) => headToHeadSummary(pair.raceA, pair.raceB, spec, ids);
+  function matchupTooltipFor(id: string): string | null {
+    const n = matchupNames();
+    if (n === null) return null;
+    return matchupTooltip(unitName(id), h2hFor([id]), n);
+  }
+  function renderSide(): void {
+    const side = $('#side');
+    const on = spec.metric === 'head_to_head';
+    side.hidden = !on;
+    if (!on) return;
+    const names = matchupNames();
+    renderMatchup($('#matchup'), {
+      stateName: STATE_NAME,
+      names,
+      statewide: names === null ? null : h2hFor(unitIds),
+      blockedMessage: notComparable(spec, pair.raceA, pair.raceB, pair.labelA, pair.labelB),
+      county: shownCounty === null ? null : { name: unitName(shownCounty), summary: h2hFor([shownCounty]) },
+    });
+  }
+  const pointAt = (e: Event) => {
+    const p = (e.target as Element).closest?.('path[data-unit]') as SVGPathElement | null;
+    if (p && p.dataset.unit !== shownCounty) {
+      shownCounty = p.dataset.unit!;
+      renderSide();
+    }
+  };
+  svg.addEventListener('mouseover', pointAt);
+  svg.addEventListener('focusin', pointAt);
+  svg.addEventListener('click', pointAt);
+
   function h2hNames(): { d?: string; r?: string } {
     const s = headToHeadSides(pair.raceA, pair.raceB, spec);
     if (s === null) return {};
@@ -321,6 +368,7 @@ async function render(root: HTMLElement): Promise<void> {
     );
 
     group.refresh(groupCtx());
+    renderSide();
     writeUrl();
 
     const notice = $('#notice');

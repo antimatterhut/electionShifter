@@ -101,8 +101,24 @@ test('hypothetical head-to-head: legend sits on the map and numbers match the da
   expect(legend!.x).toBeGreaterThanOrEqual(map!.x - 1);
   await expect(page.locator('#legend .who')).toContainText(/Red counties: .*Trump.*Blue counties: .*Talarico/);
   const fmt = (n: number) => n.toLocaleString('en-US');
-  await expect(page.locator('.hypo-table')).toContainText(fmt(trump));
-  await expect(page.locator('.hypo-table')).toContainText(fmt(tal));
-  await expect(page.locator('.hypo-table')).toContainText(((trump / (trump + tal)) * 100).toFixed(1) + '%');
-  await expect(page.locator('#totals-verdict')).toContainText(trump > tal ? /Trump.* would win Texas/ : /Talarico.* would win Texas/);
+  const side = page.locator('#matchup-state');
+  await expect(side).toContainText(fmt(trump));
+  await expect(side).toContainText(fmt(tal));
+  await expect(side).toContainText(((trump / (trump + tal)) * 100).toFixed(1) + '%');
+  await expect(page.locator('#matchup')).toContainText(trump > tal ? /Trump wins Texas by/ : /Talarico wins Texas by/);
+
+  // County: exact votes beside the map and in a hover text about only these two candidates.
+  const cu = '48085';
+  const i = ra.units.indexOf(cu);
+  const j = rb.units.indexOf(cu);
+  const ct = ra.votes[ta.k][i];
+  const cl = rb.votes[tb.k][j];
+  await page.locator(`#map path[data-unit="${cu}"]`).hover();
+  await expect(page.locator('#matchup-county')).toContainText('Collin County');
+  await expect(page.locator('#matchup-county')).toContainText(`${fmt(ct)} votes`);
+  await expect(page.locator('#matchup-county')).toContainText(`${fmt(cl)} votes`);
+  const tip = page.locator('#tooltip');
+  await expect(tip).toContainText(fmt(ct));
+  await expect(tip).toContainText(fmt(cl));
+  await expect(tip).not.toContainText(/Margin swing|Turnout change|Raw margin/);
 });

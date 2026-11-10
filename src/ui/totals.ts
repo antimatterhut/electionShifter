@@ -58,7 +58,6 @@ export function renderTotals(host: HTMLElement, ctx: TotalsContext, onPick: (sid
   const A = `${nameOf(ctx.raceA, ia)} (${ctx.labelA})`;
   const B = `${nameOf(ctx.raceB, ib)} (${ctx.labelB})`;
   let verdict = 'Pick a candidate in each race to compare their vote totals.';
-  let hypo = '';
   const h = headToHeadSummary(ctx.raceA, ctx.raceB, { candA: ia, candB: ib }, ctx.unitIds);
   if (h !== null) {
     const dIsA = h.dFrom === 'A';
@@ -70,12 +69,6 @@ export function renderTotals(host: HTMLElement, ctx: TotalsContext, onPick: (sid
       lead === null
         ? `Hypothetical ${nameD} vs. ${nameR}: an exact tie at ${fmtCount(h.d.votes)} votes each.`
         : `Hypothetical ${nameD} vs. ${nameR}: ${winName} would win ${ctx.stateName} by ${fmtCount(Math.abs(h.rawMargin))} votes (${Math.abs(h.margin).toFixed(1)} points).`;
-    hypo = `<table class="hypo-table"><caption>Hypothetical head-to-head (their combined votes)</caption>
-      <thead><tr><th scope="col">Candidate</th><th scope="col">Votes</th><th scope="col">Share</th><th scope="col">Counties won</th></tr></thead>
-      <tbody>
-        <tr class="d"><th scope="row">${esc(nameD)}</th><td>${fmtCount(h.d.votes)}</td><td>${h.d.share.toFixed(1)}%</td><td>${h.d.counties}</td></tr>
-        <tr class="r"><th scope="row">${esc(nameR)}</th><td>${fmtCount(h.r.votes)}</td><td>${h.r.share.toFixed(1)}%</td><td>${h.r.counties}</td></tr>
-      </tbody></table>`;
   } else if (va !== null && vb !== null) {
     const diff = va - vb;
     verdict =
@@ -93,7 +86,6 @@ export function renderTotals(host: HTMLElement, ctx: TotalsContext, onPick: (sid
       <select id="tot-b">${opts(ctx.raceB, ib)}</select>
     </div>
     <p id="totals-verdict"><strong>${esc(verdict)}</strong></p>
-    ${hypo}
     <div class="totals-grid">${table(ctx.labelA, t.a, ia)}${table(ctx.labelB, t.b, ib)}</div>
     <p class="sub">This is a what-if built from two different elections: each candidate's real votes, with no adjustment for turnout differences between the years.${
       missing > 0 ? ` Counted over the ${t.used} of ${t.requested} counties with data in both races.` : ` All ${t.used} counties counted.`

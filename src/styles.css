@@ -91,3 +91,25 @@ path[data-selected] { cursor: pointer; }
 .hypo-table th[scope="row"], .hypo-table th[scope="col"]:first-child { text-align: left; }
 .hypo-table tr.d th, .hypo-table tr.d td { border-left: 4px solid #2166ac; }
 .hypo-table tr.r th, .hypo-table tr.r td { border-left: 4px solid #b2182b; }
+
+/* Map with a matchup panel beside it. */
+#map-row { display: flex; gap: 1rem; align-items: flex-start; }
+#map-row #map-wrap { flex: 1 1 0; min-width: 0; }
+#side { flex: 0 0 20rem; position: sticky; top: .5rem; background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: .5rem .85rem; }
+#side[hidden] { display: none; }
+#side h2 { font-size: 1.05rem; margin: .25rem 0 .5rem; }
+#side h3 { font-size: .95rem; margin: .75rem 0 .25rem; border-top: 1px solid #ddd; padding-top: .6rem; }
+.matchup-rows { list-style: none; padding: 0; margin: 0 0 .5rem; }
+.matchup-rows li { display: grid; grid-template-columns: 1.2rem 1fr auto; column-gap: .4rem; align-items: baseline; margin: .3rem 0; }
+.matchup-rows .swatch { grid-row: 1 / span 2; align-self: center; height: 1.2rem; }
+.matchup-rows .who-name { font-weight: 600; }
+.matchup-rows .who-pct { font-weight: 700; font-size: 1.1rem; }
+.matchup-rows .who-votes { grid-column: 2 / span 2; font-size: .85rem; color: #333; }
+.split { display: flex; height: .8rem; border: 1px solid #999; margin: .4rem 0; }
+.split span { display: block; height: 100%; }
+#side .lead { font-weight: 600; margin: .3rem 0; }
+#tooltip .swatch { width: .8rem; height: .8rem; vertical-align: middle; }
+@media (max-width: 50rem) {
+  #map-row { flex-direction: column; }
+  #side { flex: none; width: auto; position: static; }
+}
