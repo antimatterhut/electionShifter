@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-11-09 by Phase 9 session
+Last updated: 2026-11-09 by Phase 10 session
 
 ## Phase checklist
 Legend: [ ] todo, [~] in progress, [x] done
@@ -14,7 +14,7 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [x] 7. All Texas statewide races and race picker
 - [x] 8. County groups
 - [x] 9. Shareable URLs
-- [ ] 10. PNG export
+- [x] 10. PNG export
 - [ ] 11. 2026 full-county states
 - [ ] 12. 2024 President and Senate everywhere
 - [ ] 13. 2024 Governor and other statewide offices
@@ -27,9 +27,13 @@ Legend: [ ] todo, [~] in progress, [x] done
 - [ ] 20. v1 audit
 
 ## Next steps
-Start Phase 10 (PNG export) in a new session using KICKOFF_PROMPTS.md.
+Start Phase 11 (2026 full-county states) in a new session using KICKOFF_PROMPTS.md.
 
 ## Last session summary
+- Phase 10 done: `src/ui/export.ts` (pure `buildExportSvg`, `wrap`, `exportFileName`; browser `renderPng`, `mountExport`, `mapMarkup`) plus a "Download PNG" button. `legend.ts` now has a pure `legendModel` shared by the on-page legend and the export (behavior unchanged). SVG is 1600x1000 with no external styles; canvas at 2x gives a 3200x2000 PNG. Contains title, color note, status badge (UNOFFICIAL as of date / CERTIFIED), map, legend (bins or gradient, direction, who-is-green text, Missing), races compared, sources with status and as-of dates, status line and full share link. Blocked (not comparable) views show the message instead of a legend.
+- Tests: 161 vitest (9 new in `tests/unit/export.test.ts`: content, no external refs, certified badge, escaping, bins, gradient, blocked, wrap, filename) and 37 Playwright (2 new in `tests/e2e/export.spec.ts`: real download, filename, PNG IHDR 3200x2000, pixel sampling of map/legend/header/badge/footer, map colors match the on-page fills, empty region stays blank) via full `npm test`. I also viewed one exported PNG by eye; layout is clean.
+- Not tested: text content inside the PNG is proven on the SVG string, not by OCR of the PNG; browsers other than Chromium; very long group-laden URLs (wrapped at 190 chars, not visually checked); long titles wrap to two lines (not visually checked). Export always includes the head-to-head matchup only via the legend, not the matchup panel. Group-selected counties keep their black outline in the PNG.
+- Judgment calls: "short URL" is the full live share link (the project has no shortener). Legend text refactor touched Phase 5-6 code.
 - Phase 9 done: `src/domain/urlState.ts` (pure parse/serialize/shareUrl), `src/ui/share.ts` (Copy link button + readonly link box, replaceState), wired in `app.ts`; group panel takes restored ids/name and reports name edits. Tests: 148 vitest (5 new: round-trip over all metrics x basis x which, defaults, invalid values, garbage, live-site link) and 33 Playwright (3 new in `share.spec.ts`: full URL restores view and group and reopens in a new browser context from the copied link, replaceState adds no history entries, invalid params show a notice without page errors) via full `npm test`.
 - Judgment calls: added a `which` param (not in the §Phase 9 list) so margin / raw margin restore exactly. `mode` is parsed, validated and carried through but unused until Phase 18. Candidate ids are checked against the race files after load. The URL is rewritten on every view or group change.
 - Uncertain: the Copy button's clipboard write is not covered by a test (headless permissions); the link box content is. "New context" was tested with a fresh Playwright context against the local preview, not the deployed site.

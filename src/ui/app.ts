@@ -19,7 +19,8 @@ import { renderControls } from './controls.ts';
 import { mountGroupPanel, type GroupPanel } from './groups.ts';
 import { loadManifest, loadRace, loadTopology, loadUnits } from './data.ts';
 import { METRICS } from './explain.ts';
-import { renderLegend } from './legend.ts';
+import { exportFileName, mapMarkup, mountExport } from './export.ts';
+import { legendModel, renderLegend, type LegendModel } from './legend.ts';
 import { paintMap, renderMap } from './map.ts';
 import { renderRacePicker, type RacePair } from './racepicker.ts';
 import { mountShare } from './share.ts';
@@ -84,6 +85,7 @@ async function render(root: HTMLElement): Promise<void> {
     <section id="picker" aria-label="Choose two races"></section>
     <section id="controls" aria-label="Controls"></section>
     <section id="share" aria-label="Share this view"></section>
+    <section id="export" aria-label="Download an image"></section>
     <aside id="url-notice" class="notice" role="status" hidden></aside>
     <aside id="notice" class="notice" role="note" hidden></aside>
     <p id="not-comparable" class="notice" role="status" hidden></p>
@@ -117,6 +119,9 @@ async function render(root: HTMLElement): Promise<void> {
   const urlNotices = [...parsed.notices];
   const initial = parsed.state;
   const share = mountShare($('#share'));
+  const exporter = mountExport($('#export'));
+  let lastLegend: LegendModel | null = null;
+  let lastBlocked: string | null = null;
   const showUrlNotices = () => {
     const el = $('#url-notice');
     el.hidden = urlNotices.length === 0;
@@ -331,13 +336,16 @@ async function render(root: HTMLElement): Promise<void> {
       return { fill: colorForScale(v, scale), label: `${name} County: ${info.short} ${text}` };
     });
 
+    const legendCands = {
+      a: candShort(raceA, spec.candA),
+      b: candShort(raceB, spec.candB),
+      ...h2hNames(),
+    };
+    lastBlocked = blocked;
+    lastLegend = blocked === null ? legendModel(spec.metric, scale, spec.basis, labelA, labelB, legendCands) : null;
     $('#legend-wrap').replaceChildren(
       blocked === null
-        ? renderLegend(spec.metric, scale, spec.basis, labelA, labelB, {
-            a: candShort(raceA, spec.candA),
-            b: candShort(raceB, spec.candB),
-            ...h2hNames(),
-          })
+        ? renderLegend(spec.metric, scale, spec.basis, labelA, labelB, legendCands)
         : document.createElement('div'),
     );
 
@@ -384,6 +392,32 @@ async function render(root: HTMLElement): Promise<void> {
       });
     }
   }
+
+  exporter.setSource(() => {
+    const { metaA, metaB, labelA, labelB } = pair;
+    const unofficial = metaA.status === 'unofficial' || metaB.status === 'unofficial';
+    const asOf = [metaA, metaB]
+      .filter((m) => m.status === 'unofficial')
+      .map((m) => m.as_of)
+      .sort()
+      .pop();
+    const src = (m: RaceMeta, l: string) => `${l}: ${m.source_label} (${m.status}, as of ${m.as_of}).${m.method_note ? ' ' + m.method_note : ''}`;
+    return {
+      fileName: exportFileName(metaA.race_id, metaB.race_id, spec.metric),
+      input: {
+        title: $('#title').textContent ?? '',
+        subtitle: METRICS[spec.metric].colors,
+        statusText: unofficial ? `UNOFFICIAL as of ${asOf ?? ''}` : 'CERTIFIED',
+        unofficial,
+        mapMarkup: mapMarkup(svg),
+        legend: lastLegend,
+        blockedMessage: lastBlocked,
+        races: { a: labelA, b: labelB },
+        sources: [src(metaA, labelA), src(metaB, labelB)],
+        url: $<HTMLInputElement>('#share-link').value,
+      },
+    };
+  });
 
   let ids: RacePair = { a: initial.a, b: initial.b };
   renderRacePicker($('#picker'), races, ids, (next) => {

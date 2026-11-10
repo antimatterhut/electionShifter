@@ -28,6 +28,9 @@ Push to `main`. GitHub Actions runs the tests and publishes `dist/` to GitHub Pa
 ## Shareable links
 The address bar tracks the view with `history.replaceState`. Params: `v=1, a, b` (race ids), `metric`, `basis`, `which` (A/B, for single-race metrics), `state`, `ca`, `cb` (candidate ids), `g` (comma-separated county ids), `gname`, `mode`. Invalid values fall back to defaults and show a notice. "Copy link" always produces a `https://antimatterhut.github.io/electionShifter/?...` URL.
 
+## PNG export
+The "Download PNG" button builds a 1600x1000 SVG (title, map, legend, both races, sources, status badge, full share link), draws it to a 2x canvas and downloads a 3200x2000 PNG named from the races and metric. Code: `src/ui/export.ts`. Unofficial races always show the UNOFFICIAL badge and status line. Works in Chromium; other browsers untested.
+
 ## Data refresh
 Geometry (Phase 3):
 - `npm run data:fetch:census` downloads the Census county file into a new dated snapshot under
