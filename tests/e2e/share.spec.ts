@@ -70,7 +70,7 @@ test('legend names who is green and purple, and totals compare two candidates', 
   await expect(page.locator('#cand-a')).toHaveValue(await page.locator('#tot-a').inputValue());
 });
 
-test('hypothetical head-to-head: legend sits on the map and numbers match the data', async ({ page }) => {
+test('hypothetical head-to-head: legend sits beside the map and numbers match the data', async ({ page }) => {
   const { readFileSync } = await import('node:fs');
   const load = (f: string) => JSON.parse(readFileSync(`public/data/v1/races/${f}.json`, 'utf8'));
   const ra = load('2024/TX/2024-TX-president-gen');
@@ -94,11 +94,11 @@ test('hypothetical head-to-head: legend sits on the map and numbers match the da
   });
 
   await page.goto(`./?v=1&a=2024-TX-president-gen&b=2026-TX-us-senate-gen&metric=head_to_head&ca=${ta.id}&cb=${tb.id}`);
+  await expect(page.locator('#side #legend')).toBeVisible();
   const map = await page.locator('#map').boundingBox();
-  const legend = await page.locator('#map-wrap #legend').boundingBox();
-  expect(legend).not.toBeNull();
-  expect(legend!.y + legend!.height).toBeLessThanOrEqual(map!.y + map!.height + 1);
-  expect(legend!.x).toBeGreaterThanOrEqual(map!.x - 1);
+  const legend = await page.locator('#side #legend').boundingBox();
+  // The scale sits beside the map, never on top of it.
+  expect(legend!.x).toBeGreaterThanOrEqual(map!.x + map!.width - 1);
   await expect(page.locator('#legend .who')).toContainText(/Red counties: .*Trump.*Blue counties: .*Talarico/);
   const fmt = (n: number) => n.toLocaleString('en-US');
   const side = page.locator('#matchup-state');

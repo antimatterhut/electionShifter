@@ -88,8 +88,8 @@ async function render(root: HTMLElement): Promise<void> {
     <aside id="notice" class="notice" role="note" hidden></aside>
     <p id="not-comparable" class="notice" role="status" hidden></p>
     <div id="map-row">
-      <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div><div id="legend-wrap"></div></div>
-      <aside id="side" aria-label="Matchup" hidden><section id="matchup"></section></aside>
+      <div id="map-wrap"><div id="tooltip" role="tooltip" hidden></div></div>
+      <aside id="side" aria-label="Legend and matchup"><div id="legend-wrap"></div><section id="matchup" hidden></section></aside>
     </div>
     <section id="totals" aria-label="Total votes"></section>
     <section id="group" aria-label="County group"></section>
@@ -275,9 +275,8 @@ async function render(root: HTMLElement): Promise<void> {
     return matchupTooltip(unitName(id), h2hFor([id]), n);
   }
   function renderSide(): void {
-    const side = $('#side');
     const on = spec.metric === 'head_to_head';
-    side.hidden = !on;
+    $('#matchup').hidden = !on;
     if (!on) return;
     const names = matchupNames();
     renderMatchup($('#matchup'), {

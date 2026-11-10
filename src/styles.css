@@ -71,9 +71,8 @@ path[data-selected] { cursor: pointer; }
 .totals-table tr.all { border-top: 1px solid #999; }
 .legend .who, #legend .who { margin: 0.25rem 0; }
 
-/* Legend sits on the map, in the empty lower-left corner of the state. */
-#legend-wrap { position: absolute; left: .5rem; bottom: .5rem; z-index: 5; max-width: min(24rem, 55%); }
-#legend-wrap #legend { background: rgba(255,255,255,.92); border: 1px solid #bbb; border-radius: 4px; padding: .25rem .6rem .4rem; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+/* Legend lives in the side column beside the map. */
+#legend-wrap { margin-bottom: .75rem; }
 #legend h2 { font-size: .85rem; }
 #legend .dir, #legend .who { font-size: .75rem; }
 #legend li { font-size: .72rem; }
@@ -82,9 +81,6 @@ path[data-selected] { cursor: pointer; }
 #legend .gradient { margin-bottom: 1.2rem; }
 #legend .more summary { font-size: .72rem; cursor: pointer; color: #444; }
 #legend .more .note { font-size: .72rem; }
-@media (max-width: 40rem) {
-  #legend-wrap { position: static; max-width: none; margin-top: .5rem; }
-}
 .hypo-table { border-collapse: collapse; margin: .5rem 0; }
 .hypo-table caption { text-align: left; font-weight: 600; padding-bottom: .25rem; }
 .hypo-table th, .hypo-table td { padding: .2rem .8rem; text-align: right; }
